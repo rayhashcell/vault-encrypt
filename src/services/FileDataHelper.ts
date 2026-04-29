@@ -2,7 +2,7 @@ import { CryptoHelperFactory } from "./CryptoHelperFactory.ts";
 
 export class FileData {
 	
-	public version = '1.0';
+	public version = '2.0';
 	public hint: string;
 	public encodedData:string;
 
@@ -27,8 +27,15 @@ export class FileDataHelper{
 		if ( data.encodedData == '' ){
 			return '';
 		}
-		const crypto = CryptoHelperFactory.BuildFromFileDataOrThrow( data );
+		const crypto = CryptoHelperFactory.BuildFromFileDataOrNull( data );
+		if ( crypto == null ){
+			return null;
+		}
 		return await crypto.decryptFromBase64( data.encodedData, pass );
+	}
+
+	public static isSupported( data: FileData ) : boolean{
+		return CryptoHelperFactory.BuildFromFileDataOrNull( data ) != null;
 	}
 }
 

@@ -19,7 +19,7 @@ To install Obsidian on Windows:
 3. Run the downloaded installer.
 4. Follow the on-screen instructions to complete the installation.
 
-## Installing the Obsidian Encrypt Plugin
+## Installing the Custom Encrypt Plugin
 
 To install the plugin:
 
@@ -33,9 +33,9 @@ To install the plugin:
    
    ![Step3](assets/doc_inst_3.png)
 
-4. Type **Meld Encrypt** in the search box.
+4. Type **Custom Encrypt** in the search box.
  
-5. Select **Meld Encrypt** and click **Install**.
+5. Select **Custom Encrypt** and click **Install**.
    
     ![Step5](assets/doc_inst_4.png)
 

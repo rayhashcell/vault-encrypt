@@ -17,7 +17,7 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 		this.plugin = plugin;
 
 		this.plugin.addCommand({
-			id: 'meld-encrypt-convert-to-or-from-encrypted-note',
+			id: 'custom-encrypt-convert-to-or-from-encrypted-note',
 			name: 'Convert to or from an Encrypted note',
 			icon: 'file-lock-2',
 			checkCallback: (checking) => this.processCommandConvertActiveNote( checking ),
@@ -143,7 +143,7 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 				password
 			);
 			
-			new Notice( '🔐 Note was encrypted 🔐' );
+			new Notice( '🛡️ Note was encrypted 🛡️' );
 
 		}catch( error ){
 			if (error){
@@ -200,17 +200,19 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 	private async closeUpdateRememberPasswordThenReopen( file:TFile, newFileExtension: string, content: string, pw:PasswordAndHint ) {
 		
 		let didDetach = false;
+		const detachPromises: Promise<void>[] = [];
 
 		this.plugin.app.workspace.iterateAllLeaves( l => {
 			if ( l.view instanceof TextFileView && l.view.file == file ){
 				if ( l.view instanceof EncryptedMarkdownView ){
-					l.view.detachSafely();
+					detachPromises.push( l.view.detachSafely() );
 				}else{
 					l.detach();
 				}
 				didDetach = true;
 			}
 		});
+		await Promise.all( detachPromises );
 
 		try{
 			const newFilepath = Utils.getFilePathWithNewExtension(file, newFileExtension);

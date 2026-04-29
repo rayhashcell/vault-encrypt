@@ -10,5 +10,14 @@ export class Utils{
 		return normalizePath( `${file.parent?.path}/${file.basename}` );
 	}
 
+	public static getPathExcludingExtension( path: string ) : string {
+		const normalizedPath = normalizePath( path );
+		const slashIndex = normalizedPath.lastIndexOf( '/' );
+		const dotIndex = normalizedPath.lastIndexOf( '.' );
+		if ( dotIndex <= slashIndex ){
+			return normalizedPath;
+		}
+		return normalizedPath.slice( 0, dotIndex );
+	}
 
 }

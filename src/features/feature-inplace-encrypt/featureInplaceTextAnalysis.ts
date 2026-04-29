@@ -1,5 +1,5 @@
 import { Decryptable } from "./Decryptable.ts";
-import { _HINT, _PREFIXES, _PREFIX_A, _PREFIX_A_VISIBLE, _PREFIX_B, _PREFIX_B_VISIBLE, _PREFIX_OBSOLETE, _PREFIX_OBSOLETE_VISIBLE, _SUFFIXES } from "./FeatureInplaceConstants.ts";
+import { INPLACE_FORMATS, InPlaceFormatDefinition, _HINT, _PREFIXES, _SUFFIXES } from "./FeatureInplaceConstants.ts";
 
 export class FeatureInplaceTextAnalysis{
 	processedText:string;
@@ -8,7 +8,6 @@ export class FeatureInplaceTextAnalysis{
 	prefix: string;
 	suffix: string;
 
-	hasObsoleteEncryptedPrefix: boolean;
 	hasEncryptedPrefix: boolean;
 	hasEncryptedSuffix: boolean;
 	canDecrypt: boolean;
@@ -32,8 +31,6 @@ export class FeatureInplaceTextAnalysis{
 		this.hasEncryptedPrefix = this.prefix.length > 0;
 		this.hasEncryptedSuffix = this.suffix.length > 0;
 
-		this.hasObsoleteEncryptedPrefix = this.prefix === _PREFIX_OBSOLETE || this.prefix === _PREFIX_OBSOLETE_VISIBLE;
-
 		this.containsEncryptedMarkers = [..._PREFIXES, ..._SUFFIXES].some( (marker) => text.includes(marker ));
 
 		this.canDecrypt = this.hasEncryptedPrefix && this.hasEncryptedSuffix;
@@ -50,6 +47,13 @@ export class FeatureInplaceTextAnalysis{
 		}
 	}
 
+	private getFormatForPrefix(prefix: string): InPlaceFormatDefinition | null{
+		return INPLACE_FORMATS.find( (format) => (
+			format.hiddenPrefix === prefix
+			|| format.visiblePrefix === prefix
+		) ) ?? null;
+	}
+
 	private parseDecryptableContent(text: string) : Decryptable | null {
 		const result = new Decryptable();
 
@@ -59,14 +63,12 @@ export class FeatureInplaceTextAnalysis{
 		){
 			return null; // invalid format
 		}
-		
-		if ( this.hasObsoleteEncryptedPrefix ){
-			result.version = 0;
-		}else if ( this.prefix == _PREFIX_B || this.prefix == _PREFIX_B_VISIBLE ){
-			result.version = 2;
-		}else if ( this.prefix == _PREFIX_A || this.prefix == _PREFIX_A_VISIBLE ){
-			result.version = 1;
+
+		const format = this.getFormatForPrefix(this.prefix);
+		if ( format == null ){
+			return null;
 		}
+		result.version = format.version;
 
 		// remove markers from start and end	
 		const content = text.substring(this.prefix.length, text.length - this.suffix.length);
@@ -87,7 +89,7 @@ export class FeatureInplaceTextAnalysis{
 		}else{
 			result.base64CipherText = content;
 		}
-		result.showInReadingView = !this.prefix.includes("%%");
+		result.showInReadingView = this.prefix === format.visiblePrefix;
 		return result;
 
 	}

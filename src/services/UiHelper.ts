@@ -38,13 +38,22 @@ export class UiHelper{
 			.setDesc(desc)
 			.addButton( cb=>{
 				cb.buttonEl.tabIndex = -1;
+				cb.buttonEl.setAttribute('aria-pressed', 'false');
 				cb
-					.setIcon( 'reading-glasses' )
+					.setIcon( 'eye-off' )
+					.setTooltip( 'Show password' )
 					.onClick( evt =>{
 						// toggle view password
 						const inputCtrl = sControl.components.find( (bc, idx, obj)=>bc instanceof TextComponent );
 						if (inputCtrl instanceof TextComponent){
-							inputCtrl.inputEl.type = inputCtrl.inputEl.type == 'password' ? 'text' : 'password';
+							const willShowPassword = inputCtrl.inputEl.type == 'password';
+							inputCtrl.inputEl.type = willShowPassword ? 'text' : 'password';
+							cb
+								.setIcon( willShowPassword ? 'eye' : 'eye-off' )
+								.setTooltip( willShowPassword ? 'Hide password' : 'Show password' )
+							;
+							cb.buttonEl.toggleClass( 'is-active', willShowPassword );
+							cb.buttonEl.setAttribute( 'aria-pressed', willShowPassword.toString() );
 						}
 					})
 				;

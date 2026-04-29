@@ -1,12 +1,14 @@
-import { MarkdownView, Notice, TFile, ViewStateResult } from "obsidian";
+import { MarkdownView, Notice, TFile, ViewStateResult, WorkspaceLeaf } from "obsidian";
 import { FileData, FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.ts";
 import { PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { ENCRYPTED_FILE_EXTENSIONS } from "../../services/Constants.ts";
+import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
 
 export class EncryptedMarkdownView extends MarkdownView {
 
-	static VIEW_TYPE = 'meld-encrypted-view';
+	static VIEW_TYPE = 'custom-encrypted-view';
+	private pluginSettings: IMeldEncryptPluginSettings;
 
 	passwordAndHint : PasswordAndHint | null = null;
 	encryptedData : FileData | null = null;
@@ -20,6 +22,11 @@ export class EncryptedMarkdownView extends MarkdownView {
 	override allowNoFile = false;
 
 	origFile:TFile | null; // used resync password cache when renaming the file
+
+	constructor(leaf: WorkspaceLeaf, settings: IMeldEncryptPluginSettings) {
+		super(leaf);
+		this.pluginSettings = settings;
+	}
 	
 	override getViewType(): string {
 		return EncryptedMarkdownView.VIEW_TYPE;
@@ -60,16 +67,34 @@ export class EncryptedMarkdownView extends MarkdownView {
 
 			const fileContents = await this.app.vault.read( file );
 			this.encryptedData = JsonFileEncoding.decode( fileContents );
+			if ( !FileDataHelper.isSupported( this.encryptedData ) ){
+				new Notice('Unsupported encrypted file format.');
+				this.leaf.detach();
+				return;
+			}
 
 			this.passwordAndHint = await SessionPasswordService.getByFile( file );
 			this.passwordAndHint.hint = this.encryptedData.hint;
+			const rememberedPasswordAndHint = this.passwordAndHint;
 
 			// try to decrypt the file content
 			let decryptedText: string|null = null;
+			let nextPasswordPromptDefault: PasswordAndHint = { password: '', hint: this.encryptedData.hint };
 
-			if ( this.passwordAndHint.password.length > 0 ) {
+			if (
+				rememberedPasswordAndHint.password.length > 0
+				&& !this.pluginSettings.confirmRememberedPasswordBeforeOpen
+			) {
 				decryptedText = await FileDataHelper.decrypt( this.encryptedData, this.passwordAndHint.password );
 			}
+
+			if (
+				rememberedPasswordAndHint.password.length > 0
+				&& this.pluginSettings.confirmRememberedPasswordBeforeOpen
+			) {
+				nextPasswordPromptDefault = rememberedPasswordAndHint;
+			}
+
 			while( decryptedText == null ){
 				// prompt for password
 				this.passwordAndHint = await new PluginPasswordModal(
@@ -77,8 +102,9 @@ export class EncryptedMarkdownView extends MarkdownView {
 					`Decrypting "${file.basename}"`,
 					false,
 					false,
-					{ password: '', hint: this.encryptedData.hint }
+					nextPasswordPromptDefault
 				).open2Async();
+				nextPasswordPromptDefault = { password: '', hint: this.encryptedData.hint };
 
 				if ( this.passwordAndHint == null ) {
 					// user cancelled
@@ -128,8 +154,8 @@ export class EncryptedMarkdownView extends MarkdownView {
 		}
 	}
 
-	public detachSafely(){
-		this.save();
+	public async detachSafely(){
+		await this.save();
 		this.isSavingEnabled = false;
 		this.leaf.detach();
 	}
@@ -315,8 +341,8 @@ export class EncryptedMarkdownView extends MarkdownView {
 		
 	}
 
-	lockAndClose() {
-		this.detachSafely();
+	async lockAndClose() {
+		await this.detachSafely();
 		if ( this.file != null ){
 			SessionPasswordService.clearForFile( this.file );
 		}

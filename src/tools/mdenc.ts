@@ -29,6 +29,26 @@ interface DecryptResult{
     outFile: string | undefined;
 }
 
+function escapeRegExp(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildVisibleInPlaceEncryptedText(encodedContent: string): string {
+    return `${InPlaceConstants._PREFIX_V2_VISIBLE}${encodedContent}${InPlaceConstants._SUFFIX_NO_COMMENT}`;
+}
+
+function buildVisibleInPlaceMatcher(): RegExp {
+    const prefix = escapeRegExp(InPlaceConstants._PREFIX_V2_VISIBLE);
+    const suffix = escapeRegExp(InPlaceConstants._SUFFIX_NO_COMMENT);
+    return new RegExp(`${prefix}([\\s\\S]*?)${suffix}`, 'g');
+}
+
+function buildCommentedInPlaceMatcher(): RegExp {
+    const prefix = escapeRegExp(InPlaceConstants._PREFIX_V2);
+    const suffix = escapeRegExp(InPlaceConstants._SUFFIX_WITH_COMMENT);
+    return new RegExp(`${prefix}([\\s\\S]*?)${suffix}`, 'g');
+}
+
 class ListCommandHandler {
     
 
@@ -134,13 +154,13 @@ class TestCommandHandler {
         for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
             const line = lines[lineIdx];
             const lineNo = lineIdx + 1;
-            const reInplaceMatcher = /🔐(.*?)🔐/g;
+            const reInplaceMatcher = buildVisibleInPlaceMatcher();
             const matches = Array.from( line.matchAll( reInplaceMatcher ) );
             for (const match of matches) {
 
                 const matchLoc = `line ${lineNo}, pos ${match.index!+1}`;
 
-                const encryptedText = `🔐${match[1]}🔐`;
+                const encryptedText = buildVisibleInPlaceEncryptedText(match[1]);
 
                 const txtAnalysis = new FeatureInplaceTextAnalysis( encryptedText );
                 if (!txtAnalysis.canDecrypt || txtAnalysis.decryptable == null ){
@@ -277,8 +297,8 @@ class DecryptCommandHandler{
             const lineNo = lineIdx + 1;
             
             const reInplaceMatchers = [
-                /%%🔐(.*?)🔐%%/g,
-                /🔐(.*?)🔐/g
+                buildCommentedInPlaceMatcher(),
+                buildVisibleInPlaceMatcher()
             ]
 
             let decryptedLine = line;
@@ -295,7 +315,7 @@ class DecryptCommandHandler{
                     const matchLoc = `Line ${lineNo}, pos ${match.index!+1}`;
 
                     const matchedText = match[0];
-                    const encryptedText = `🔐${match[1]}🔐`;
+                    const encryptedText = buildVisibleInPlaceEncryptedText(match[1]);
 
                     const txtAnalysis = new FeatureInplaceTextAnalysis( encryptedText );
                     if (!txtAnalysis.canDecrypt || txtAnalysis.decryptable == null ){
@@ -470,10 +490,7 @@ class Utils{
             // could have inplace encrypted notes
             if ( ext == 'md' ){
                 
-                if (
-                    content!.includes( InPlaceConstants._PREFIX_A_VISIBLE )
-                    || content!.includes( InPlaceConstants._PREFIX_B_VISIBLE )
-                ){
+                if ( content!.includes( InPlaceConstants._PREFIX_V2_VISIBLE ) ){
                     yield {
                         featureType: 'InPlace',
                         fullPath: p,
@@ -555,11 +572,10 @@ yargs.default(hideBin(process.argv))
     .help()
     .wrap( null )
     .example([
-        ['$0 list', 'Processes all *.md and *.mdenc files and list any encrypted artifacts within the current directory'],
+        ['$0 list', 'Processes all *.md and *.cenc files and list any encrypted artifacts within the current directory'],
         ['$0 test --passwords pw1 pw2', 'check that all notes can be decrypted with the given password list'],
         ['$0 decrypt --pw pw1 pw2 --outdir \\path\\to\\output\\', 'decrypt notes to an output directory'],
       ])
     .parse()
 ;
  
-

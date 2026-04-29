@@ -1,8 +1,8 @@
-# [Meld Encrypt](https://github.com/meld-cp/obsidian-encrypt) Plugin for Obsidian
+# Custom Encrypt Plugin for Obsidian
 
 **Create Encrypted Notes Within Your [Obsidian.md](https://obsidian.md/) Vault**
 
-[Meld Encrypt](https://github.com/meld-cp/obsidian-encrypt) is a community plugin that lets you encrypt and decrypt your notes in [Obsidian](https://obsidian.md/). You can choose to encrypt an [entire note](https://meld-cp.github.io/obsidian-encrypt/whole-encrypted-notes.html) or just [selected text within a note](https://meld-cp.github.io/obsidian-encrypt/in-place-encryption.html).
+Custom Encrypt is a community plugin fork that lets you encrypt and decrypt your notes in [Obsidian](https://obsidian.md/). You can choose to encrypt an entire note or just selected text within a note.
 
 Encrypted notes are never decrypted to disk giving you peace-of-mind that the decrypted contents haven't been sync'd or backed up to external systems.
 
@@ -32,10 +32,18 @@ Thank you for your support 😊
 
 Information about the latest release can be found on the [release notes](https://meld-cp.github.io/obsidian-encrypt/release-notes.html) page.
 
+### Unreleased
+
+- Rebranded the plugin package, manifest, command IDs, view type, CSS hooks, and documentation from Meld Encrypt to Custom Encrypt.
+- Changed the whole-note encrypted file extension to `.cenc` and limited supported encrypted file data to the v2 format.
+- Updated inline encryption to use the new `🛡️@v2` marker format, including Reading view marker rendering and the offline `mdenc` tools.
+- Simplified remembered-password sharing to Vault or File scope, added optional confirmation before opening notes with a remembered password, and auto-lock open encrypted notes when the password cache expires.
+- Removed legacy crypto helpers, obsolete inline marker support, external password-file caching, and the empty-selection text prompt for inline encryption.
+- Refined settings labels, password visibility controls, unsupported-format handling, and related documentation.
+
 Report any bugs or features requests [here](https://github.com/meld-cp/obsidian-encrypt/issues).
 
 
 ## Documentation
 
 Documentation can be found [here](https://meld-cp.github.io/obsidian-encrypt/)
-

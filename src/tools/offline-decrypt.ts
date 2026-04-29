@@ -1,4 +1,3 @@
-import { Decryptable } from "../features/feature-inplace-encrypt/Decryptable.ts";
 import { FeatureInplaceTextAnalysis } from "../features/feature-inplace-encrypt/featureInplaceTextAnalysis.ts";
 import { CryptoHelperFactory } from "../services/CryptoHelperFactory.ts";
 import { JsonFileEncoding } from "../services/FileDataHelper.ts";
@@ -27,18 +26,6 @@ export class OfflineDecrypt {
 				}
 			}
 		}
-
-		// Trying non-marked inplace feature decryption
-		for (let ver = 10; ver >= 0; ver--) {
-			console.info( 'Trying non-marked inplace feature decryption', 'ver', ver );
-			const decryptable : Decryptable = { version: ver, base64CipherText: content, hint: '', showInReadingView: false };
-			const ch = CryptoHelperFactory.BuildFromDecryptableOrNull(decryptable)
-			const result = await ch?.decryptFromBase64( decryptable.base64CipherText, password );
-			if ( result != null ){
-				return result;
-			}
-		}
-
 
 		// Trying whole note feature decryption
 		console.info( 'Trying whole note feature decryption' );

@@ -12,16 +12,17 @@ export default class MeldEncrypt extends Plugin {
 	private settings: IMeldEncryptPluginSettings;
 
 	private enabledFeatures : IMeldEncryptPluginFeature[] = [];
+	private wholeNoteEncryptFeature: FeatureWholeNoteEncryptV2;
+	private isAutoLockingExpiredSession = false;
 
 	async onload() {
-		
-		SessionPasswordService.init(this.app.vault.adapter);
 
 		// Settings
 		await this.loadSettings();
 
+		this.wholeNoteEncryptFeature = new FeatureWholeNoteEncryptV2();
 		this.enabledFeatures.push(
-			new FeatureWholeNoteEncryptV2(),
+			this.wholeNoteEncryptFeature,
 			new FeatureConvertNote(),
 			new FeatureInplaceEncrypt(),
 		);
@@ -37,7 +38,7 @@ export default class MeldEncrypt extends Plugin {
 		// End Settings
 
 		this.addCommand({
-			id: 'meld-encrypt-clear-password-cache',
+			id: 'custom-encrypt-clear-password-cache',
 			name: 'Clear Session Password Cache',
 			icon: 'shield-ellipsis',
 			callback: () => {
@@ -46,13 +47,20 @@ export default class MeldEncrypt extends Plugin {
 			},
 		});
 
+		this.registerInterval(
+			window.setInterval(
+				() => this.lockEncryptedNotesIfSessionExpired().catch(console.error),
+				1000
+			)
+		);
+
 		// load features
 		this.enabledFeatures.forEach(async f => {
 			await f.onload( this, this.settings );
 		});
 
 	}
-	
+
 	override onunload() {
 		this.enabledFeatures.forEach(async f => {
 			f.onunload();
@@ -60,29 +68,64 @@ export default class MeldEncrypt extends Plugin {
 		super.onunload();
 	}
 
+	private async lockEncryptedNotesIfSessionExpired() {
+		if ( this.isAutoLockingExpiredSession ){
+			return;
+		}
+
+		const sessionExpired = SessionPasswordService.clearIfExpired();
+		if (!sessionExpired){
+			return;
+		}
+
+		this.isAutoLockingExpiredSession = true;
+		try {
+			const lockedCount = await this.wholeNoteEncryptFeature.lockAndCloseAllEncryptedNotes();
+			SessionPasswordService.markExpiryHandled();
+			new Notice(
+				lockedCount > 0
+					? 'Session password expired. Open encrypted notes locked.'
+					: 'Session password expired. Password cache cleared.'
+			);
+		} finally {
+			this.isAutoLockingExpiredSession = false;
+		}
+	}
+
 	async loadSettings() {
-		
+
 		const DEFAULT_SETTINGS: IMeldEncryptPluginSettings = {
 			confirmPassword: true,
 			rememberPassword: true,
 			rememberPasswordTimeout: 30,
 			rememberPasswordLevel: SessionPasswordService.LevelVault,
-			rememberPasswordExternalFilePaths: [],
+			confirmRememberedPasswordBeforeOpen: false,
 
 			featureWholeNoteEncrypt: {
 			},
-			
+
 			featureInplaceEncrypt:{
-				expandToWholeLines: false,
 				markerSearchLimit: 10000,
 				showMarkerWhenReadingDefault: true
 			}
 		}
 
-		this.settings = Object.assign(
-			DEFAULT_SETTINGS,
-			await this.loadData()
-		);
+		const loadedSettings = await this.loadData() as Partial<IMeldEncryptPluginSettings> | null;
+		this.settings = {
+			confirmPassword: loadedSettings?.confirmPassword ?? DEFAULT_SETTINGS.confirmPassword,
+			rememberPassword: loadedSettings?.rememberPassword ?? DEFAULT_SETTINGS.rememberPassword,
+			rememberPasswordTimeout: loadedSettings?.rememberPasswordTimeout ?? DEFAULT_SETTINGS.rememberPasswordTimeout,
+			rememberPasswordLevel: loadedSettings?.rememberPasswordLevel ?? DEFAULT_SETTINGS.rememberPasswordLevel,
+			confirmRememberedPasswordBeforeOpen: loadedSettings?.confirmRememberedPasswordBeforeOpen ?? DEFAULT_SETTINGS.confirmRememberedPasswordBeforeOpen,
+			featureWholeNoteEncrypt: {
+				...DEFAULT_SETTINGS.featureWholeNoteEncrypt,
+				...(loadedSettings?.featureWholeNoteEncrypt ?? {}),
+			},
+			featureInplaceEncrypt:{
+				markerSearchLimit: loadedSettings?.featureInplaceEncrypt?.markerSearchLimit ?? DEFAULT_SETTINGS.featureInplaceEncrypt.markerSearchLimit,
+				showMarkerWhenReadingDefault: loadedSettings?.featureInplaceEncrypt?.showMarkerWhenReadingDefault ?? DEFAULT_SETTINGS.featureInplaceEncrypt.showMarkerWhenReadingDefault,
+			}
+		};
 
 		// apply settings
 		SessionPasswordService.setActive( this.settings.rememberPassword );
@@ -92,7 +135,7 @@ export default class MeldEncrypt extends Plugin {
 			: this.settings.rememberPasswordTimeout
 		);
 		SessionPasswordService.setLevel( this.settings.rememberPasswordLevel );
-		SessionPasswordService.setExternalFilePaths( this.settings.rememberPasswordExternalFilePaths );
+		this.settings.rememberPasswordLevel = SessionPasswordService.getLevel();
 	}
 
 	async saveSettings() {

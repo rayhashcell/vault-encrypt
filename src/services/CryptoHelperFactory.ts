@@ -1,9 +1,7 @@
 import { FileData } from "./FileDataHelper.ts";
 import { Decryptable } from "../features/feature-inplace-encrypt/Decryptable.ts";
-import { CryptoHelper } from "./CryptoHelper.ts";
 import { ICryptoHelper } from "./ICryptoHelper.ts";
 import { CryptoHelper2304 } from "./CryptoHelper2304.ts";
-import { CryptoHelperObsolete } from "./CryptoHelperObsolete.ts";
 
 export class CryptoHelperFactory{
 
@@ -22,16 +20,12 @@ export class CryptoHelperFactory{
 	}
 
 	public static BuildFromFileDataOrNull( data: FileData ) : ICryptoHelper | null {
-		if ( data.version == '1.0' ){
-			return new CryptoHelper();
+		switch ( data.version ){
+			case '2.0':
+				return this.cryptoHelper2304_v2;
+			default:
+				return null;
 		}
-
-		// note				v2.0	CryptoHelper2304
-		if ( data.version == '2.0' ){
-			return this.cryptoHelper2304_v2;
-		}
-
-		return null;
 	}
 
 	public static BuildFromDecryptableOrThrow( decryptable: Decryptable ) : ICryptoHelper {
@@ -44,28 +38,12 @@ export class CryptoHelperFactory{
 	}
 
 	public static BuildFromDecryptableOrNull( decryptable: Decryptable ) : ICryptoHelper | null {
-		// Versions
-		// inplace original	_PREFIX_OBSOLETE = '%%🔐 '  CryptoHelperObsolete
-		
-		// inplace alpha	_PREFIX_A = '%%🔐α '		CryptoHelper
-		// 					_PREFIX_A_VISIBLE = '🔐α '	CryptoHelper
-
-		// inplace beta 	_PREFIX_B = '%%🔐β '		CryptoHelper2304( 16, 16, 210000 )
-		//					_PREFIX_B_VISIBLE = '🔐β '	CryptoHelper2304( 16, 16, 210000 )
-		
-		if ( decryptable.version == 0 ){
-			return new CryptoHelperObsolete();
+		switch ( decryptable.version ){
+			case 2:
+				return this.cryptoHelper2304_v2;
+			default:
+				return null;
 		}
-
-		if ( decryptable.version == 1 ){
-			return new CryptoHelper();
-		}
-
-		if ( decryptable.version == 2 ){
-			return this.cryptoHelper2304_v2;
-		}
-
-		return null;
 	}
 
 }

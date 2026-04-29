@@ -1,4 +1,4 @@
-import { App, Notice, PluginSettingTab, Setting } from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import { IMeldEncryptPluginFeature } from "../features/IMeldEncryptPluginFeature.ts";
 import { SessionPasswordService } from "../services/SessionPasswordService.ts";
 import MeldEncrypt from "../main.ts";
@@ -28,8 +28,8 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 		
 		new Setting(containerEl)
-			.setName('Confirm password?')
-			.setDesc('Confirm password when encrypting. (Recommended)')
+			.setName('Confirm password when encrypting')
+			.setDesc('Ask for the password twice when encrypting, so typos are caught before encrypted content is written.')
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.settings.confirmPassword)
@@ -45,33 +45,29 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 			if ( !this.settings.rememberPassword ){
 				pwTimeoutSetting.settingEl.hide();
 				rememberPasswordLevelSetting.settingEl.hide();
+				confirmRememberedPasswordBeforeOpenSetting.settingEl.hide();
 				return;
 			}
 
-			if ( this.settings.rememberPasswordLevel != SessionPasswordService.LevelExternalFile ){
-				pwTimeoutSetting.settingEl.show();
-				extFilePathsSetting.settingEl.hide();
-			}else{
-				pwTimeoutSetting.settingEl.hide();
-				extFilePathsSetting.settingEl.show();
-			}
+			pwTimeoutSetting.settingEl.show();
 
 			rememberPasswordLevelSetting.settingEl.show();
+			confirmRememberedPasswordBeforeOpenSetting.settingEl.show();
 
 			const rememberPasswordTimeout = this.settings.rememberPasswordTimeout;
 
-			let timeoutString = `For ${rememberPasswordTimeout} minutes`;
+			let timeoutString = `for ${rememberPasswordTimeout} minute${rememberPasswordTimeout == 1 ? '' : 's'}`;
 			if( rememberPasswordTimeout == 0 ){
-				timeoutString = 'Until Obsidian is closed';
+				timeoutString = 'until Obsidian is closed';
 			}
 
-			pwTimeoutSetting.setName( `Remember Password (${timeoutString})` )
+			pwTimeoutSetting.setName( `Remember password (${timeoutString})` )
 		
 		}
 
 		new Setting(containerEl)
-			.setName('Remember password?')
-			.setDesc('Remember the last used passwords when encrypting or decrypting.  Passwords are remembered until they timeout or Obsidian is closed')
+			.setName('Remember passwords during this session')
+			.setDesc('Keep successfully used passwords in memory for this Obsidian session. Cached passwords are cleared when this is disabled, when Obsidian closes, or when the timeout expires. Open whole-note encrypted tabs lock when the timeout expires.')
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.settings.rememberPassword)
@@ -85,14 +81,12 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 		;
 
 		const rememberPasswordLevelSetting = new Setting(containerEl)
-			.setName('Remember passwords by:')
+			.setName('Share remembered passwords by')
 			.setDesc( this.buildRememberPasswordDescription() )
 			.addDropdown( cb =>{
 				cb
 				.addOption( SessionPasswordService.LevelVault, 'Vault')
-				.addOption( SessionPasswordService.LevelParentPath, 'Folder')
 				.addOption( SessionPasswordService.LevelFilename, 'File')
-				.addOption( SessionPasswordService.LevelExternalFile, 'External File')
 					.setValue( this.settings.rememberPasswordLevel )
 					.onChange( async value => {
 						console.debug( 'rememberPasswordLevelSetting.onChange', { value } );
@@ -105,12 +99,27 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 			})
 		;
 
+		const confirmRememberedPasswordBeforeOpenSetting = new Setting(containerEl)
+			.setName('Confirm remembered password before opening encrypted notes')
+			.setDesc('When a whole-note password is already remembered, show the password dialog with it prefilled instead of opening the note automatically.')
+			.addToggle( toggle => {
+				toggle
+					.setValue( this.settings.confirmRememberedPasswordBeforeOpen )
+					.onChange( async value => {
+						this.settings.confirmRememberedPasswordBeforeOpen = value;
+						await this.plugin.saveSettings();
+						updateRememberPasswordSettingsUi();
+					})
+				;
+			})
+		;
+
 		
 		const pwTimeoutSetting = new Setting(containerEl)
-			.setDesc('The number of minutes to remember passwords.')
+			.setDesc('0 keeps cached passwords until Obsidian closes. 1-120 clears the cache after that many minutes; the timer refreshes when a cached password is used or saved.')
 			.addSlider( slider => {
 				slider
-					.setLimits(0, 120, 5)
+					.setLimits(0, 120, 1)
 					.setValue(this.settings.rememberPasswordTimeout)
 					.onChange( async value => {
 						this.settings.rememberPasswordTimeout = value;
@@ -122,43 +131,6 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 				
 			})
 		;
-
-		const extFilePathsSetting = new Setting(containerEl)
-			.setName( 'External File Paths' )
-			.setDesc( 'When needed the password is read from one of these filepaths. Paths must be relative to vault root' )
-			.addTextArea( text => {
-				text
-					.setValue( this.settings.rememberPasswordExternalFilePaths.join( '\n' ) )
-					.onChange( async value => {
-						this.settings.rememberPasswordExternalFilePaths = value.trim().split( '\n' );
-						await this.plugin.saveSettings();
-						SessionPasswordService.setExternalFilePaths( this.settings.rememberPasswordExternalFilePaths );
-					})
-				;
-				text.inputEl.placeholder = 'Enter one relative path per line';
-				text.inputEl.style.whiteSpace = 'pre';
-				text.inputEl.style.width = '100%';
-				text.inputEl.rows = 4;
-			})
-			.addButton( btn => {
-				btn
-					.setIcon( 'check' )
-					.setTooltip( 'Check Paths' )
-					.onClick( async () => {
-						const filePaths = this.settings.rememberPasswordExternalFilePaths;
-						for( const filePath of filePaths ){
-							if (await SessionPasswordService.canFetchContents( filePath ) ){
-								new Notice( `✔️ ${filePath}` );
-							}else{
-								new Notice( `❌ ${filePath}` );
-							}
-							
-						}
-					})
-				;
-			})
-		;
-		extFilePathsSetting.controlEl.style.width = '80%';
 
 		updateRememberPasswordSettingsUi();
 
@@ -177,19 +149,11 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 		
 		let tr = tbody.createEl( 'tr' );
 		tr.createEl( 'th', { text: 'Vault:', attr: { 'align': 'right'} });
-		tr.createEl( 'td', { text: 'Typically, you\'ll use the same password every time.' });
-		
-		tr = tbody.createEl( 'tr' );
-		tr.createEl( 'th', { text: 'Folder:', attr: { 'align': 'right'} });
-		tr.createEl( 'td', { text: 'Typically, you\'ll use the same password for each note within a folder.' });
+		tr.createEl( 'td', { text: 'Use one shared cached password for all encrypted notes and inline encrypted text in this vault.' });
 		
 		tr = tbody.createEl( 'tr' );
 		tr.createEl( 'th', { text: 'File:', attr: { 'align': 'right'} });
-		tr.createEl( 'td', { text: 'Typically, each note will have a unique password.' });
-		
-		tr = tbody.createEl( 'tr' );
-		tr.createEl( 'th', { text: 'External File:', attr: { 'align': 'right', 'style': 'width:12em;'} });
-		tr.createEl( 'td', { text: 'When needed the password/key is read from one of these filepaths.' });
+		tr.createEl( 'td', { text: 'Cache passwords separately by file path, without the file extension.' });
 
 		return f;
 	}

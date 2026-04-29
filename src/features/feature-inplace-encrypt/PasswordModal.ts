@@ -9,14 +9,12 @@ export default class PasswordModal extends Modal {
 	private confirmPassword: boolean;
 	private isEncrypting: boolean;
 	public showInReadingView: boolean;
-	public showTextToEncrypt: boolean;
 
 	// output
 	public resultConfirmed = false;
 	public resultPassword?: string | null = null;
 	public resultHint: string;
 	public resultShowInReadingView?: boolean | null = null;
-	public resultTextToEncrypt?: string | null = null;
 
 	constructor(
 		app: App,
@@ -24,8 +22,7 @@ export default class PasswordModal extends Modal {
 		confirmPassword: boolean,
 		defaultShowInReadingView: boolean,
 		defaultPassword: string | null = null,
-		hint:string | null = null,
-		showTextToEncrypt = false
+		hint:string | null = null
 	) {
 		super(app);
 		this.defaultPassword = defaultPassword;
@@ -33,14 +30,13 @@ export default class PasswordModal extends Modal {
 		this.showInReadingView = defaultShowInReadingView
 		this.isEncrypting = isEncrypting;
 		this.defaultHint = hint ?? '';
-		this.showTextToEncrypt = showTextToEncrypt;
 	}
 
 	onOpen() {
 		const { contentEl } = this;
 
 		contentEl.empty();
-		contentEl.classList.add('meld-encrypt-password-modal');
+		contentEl.classList.add('custom-encrypt-password-modal');
 
 		this.invalidate();
 
@@ -48,7 +44,6 @@ export default class PasswordModal extends Modal {
 		let confirmPass = '';
 		let hint = this.defaultHint;
 		let showInReadingView = this.showInReadingView;
-		let textToEncrypt = '';
 
 		new Setting(contentEl).setHeading().setName(
 			this.isEncrypting ? 'Encrypting' : 'Decrypting'
@@ -170,20 +165,6 @@ export default class PasswordModal extends Modal {
 		/* END Show indicator in reading mode */
 
 
-		/* Text to encrypt */
-		const sTextToEncrypt = new Setting(contentEl)
-			.setName('Text to encrypt')
-			.addTextArea( cb=>{
-				cb.setValue( '' ).onChange( v => textToEncrypt = v );
-				cb.inputEl.rows = 5;
-				cb.inputEl.style.width = '100%';
-			})
-		;
-		if (!this.showTextToEncrypt){
-			sTextToEncrypt.settingEl.hide();
-		}
-		/* END Text to encrypt */
-
 		new Setting(contentEl).addButton( cb=>{
 			cb
 				.setButtonText('Confirm')
@@ -199,6 +180,7 @@ export default class PasswordModal extends Modal {
 			this.invalidate();
 
 			sConfirmPassword.setDesc('');
+			sHint.setDesc('');
 
 			if ( this.confirmPassword ){
 				if (password != confirmPass){
@@ -208,11 +190,15 @@ export default class PasswordModal extends Modal {
 				}
 			}
 
+			if ( this.isEncrypting && hint.includes('`') ){
+				sHint.setDesc('Password hint cannot contain backticks.');
+				return false;
+			}
+
 			this.resultConfirmed = true;
 			this.resultPassword = password;
 			this.resultHint = hint;
 			this.resultShowInReadingView = showInReadingView;
-			this.resultTextToEncrypt = textToEncrypt;
 
 			return true;
 		}
@@ -223,7 +209,6 @@ export default class PasswordModal extends Modal {
 		this.resultConfirmed = false;
 		this.resultPassword = null;
 		this.resultHint = '';
-		this.resultTextToEncrypt = '';
 	}
 
 }

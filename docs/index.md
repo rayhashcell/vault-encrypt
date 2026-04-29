@@ -4,11 +4,11 @@ layout: default
 nav_order: 1
 ---
 
-# [Meld Encrypt](https://github.com/meld-cp/obsidian-encrypt) Plugin for Obsidian
+# Custom Encrypt Plugin for Obsidian
 
 **Create Encrypted Notes Within Your [Obsidian.md](https://obsidian.md/) Vault**
 
-[Meld Encrypt](https://github.com/meld-cp/obsidian-encrypt) is a community plugin that lets you encrypt and decrypt your notes in [Obsidian](https://obsidian.md/). You can choose to encrypt an [entire note](https://meld-cp.github.io/obsidian-encrypt/whole-encrypted-notes.html) or just [selected text within a note](https://meld-cp.github.io/obsidian-encrypt/in-place-encryption.html).
+Custom Encrypt is a community plugin fork that lets you encrypt and decrypt your notes in [Obsidian](https://obsidian.md/). You can choose to encrypt an entire note or just selected text within a note.
 
 Encrypted notes are never decrypted to disk giving you peace-of-mind that the decrypted contents haven't been sync'd or backed up to external systems.
 

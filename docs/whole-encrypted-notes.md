@@ -7,7 +7,7 @@ nav_order: 1
 
 # Whole Encrypted Notes
 
-This feature opens a text window and saves your note to an encrypted `.mdenc` file.
+This feature opens a text window and saves your note to an encrypted `.cenc` file.
 
 ## To Create a New Encrypted Note
 

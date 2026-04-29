@@ -1,20 +1,23 @@
 import MeldEncrypt from "../../main.ts";
 import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
 import { EncryptedMarkdownView } from "./EncryptedMarkdownView.ts";
-import { MarkdownView, TFolder, normalizePath, moment, TFile } from "obsidian";
+import { MarkdownView, TFolder, normalizePath, moment, TFile, Notice } from "obsidian";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
 import { FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.ts";
 import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../../services/Constants.ts";
+import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
 
 export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeature {
 
 	plugin: MeldEncrypt;
+	private settings: IMeldEncryptPluginSettings;
 
 	private statusIndicator: HTMLElement;
 
-	async onload( plugin: MeldEncrypt ) {
+	async onload( plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings ) {
 		this.plugin = plugin;
+		this.settings = settings;
 		//this.settings = settings.featureWholeNoteEncrypt;
 		
 		this.plugin.addRibbonIcon( 'file-lock-2', 'New encrypted note', async (ev)=>{
@@ -26,14 +29,14 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		});
 
 		this.plugin.addCommand({
-			id: 'meld-encrypt-create-new-note',
+			id: 'custom-encrypt-create-new-note',
 			name: 'Create new encrypted note',
 			icon: 'file-lock-2',
 			callback: async () => await this.processCreateNewEncryptedNoteCommand( this.getDefaultFileFolder() ),
 		});
 
 		this.plugin.addCommand({
-			id: 'meld-encrypt-close-and-forget',
+			id: 'custom-encrypt-close-and-forget',
 			name: 'Lock and Close all open encrypted notes',
 			icon: 'book-lock',
 			callback: async () => await this.processLockAndCloseAllEncryptedNotesCommand(),
@@ -56,7 +59,7 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		// configure status indicator
 		this.statusIndicator = this.plugin.addStatusBarItem();
 		this.statusIndicator.hide();
-		this.statusIndicator.setText('🔐');
+		this.statusIndicator.setText('🛡️');
 
 		// editor context menu
 		this.plugin.registerEvent( this.plugin.app.workspace.on('editor-menu', (menu, editor, view) => {
@@ -112,7 +115,7 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 
 
 		// register view
-		this.plugin.registerView( EncryptedMarkdownView.VIEW_TYPE, (leaf) => new EncryptedMarkdownView(leaf) );
+		this.plugin.registerView( EncryptedMarkdownView.VIEW_TYPE, (leaf) => new EncryptedMarkdownView(leaf, this.settings) );
 		this.plugin.registerExtensions( ENCRYPTED_FILE_EXTENSIONS, EncryptedMarkdownView.VIEW_TYPE );
 
 		// show status indicator for encrypted files, hide for others
@@ -163,14 +166,27 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 	}
 
 	private async processLockAndCloseAllEncryptedNotesCommand(): Promise<void> {
+		const lockedCount = await this.lockAndCloseAllEncryptedNotes();
+		const itemsCleared = SessionPasswordService.clear();
+		new Notice(
+			lockedCount > 0
+				? `Locked encrypted notes: ${lockedCount}. Remembered passwords cleared: ${itemsCleared}.`
+				: `Remembered passwords cleared: ${itemsCleared}.`
+		);
+	}
+
+	public async lockAndCloseAllEncryptedNotes(): Promise<number> {
 		// loop through all open leaves
 		const leaves = this.plugin.app.workspace.getLeavesOfType( EncryptedMarkdownView.VIEW_TYPE );
+		let lockedCount = 0;
 		for ( const leaf of leaves ) {
 			const view = leaf.view as EncryptedMarkdownView;
 			if ( view != null ){
-				view.lockAndClose();
+				await view.lockAndClose();
+				lockedCount++;
 			}
 		}
+		return lockedCount;
 	}
 
 	private getDefaultFileFolder() : TFolder {
@@ -188,29 +204,19 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		const newFilename = moment().format( `[Untitled] YYYYMMDD hhmmss[.${ENCRYPTED_FILE_EXTENSION_DEFAULT}]`);
 		const newFilepath = normalizePath( parentFolder.path + "/" + newFilename );
 		
-		let pwh : PasswordAndHint | undefined;
-		
-		if ( SessionPasswordService.getLevel() == SessionPasswordService.LevelExternalFile ){
-			// if using external file for password, try and get the password
-			pwh = await SessionPasswordService.getByPathAsync( newFilepath );
-		}
+		const pwm = new PluginPasswordModal(
+			this.plugin.app,
+			'Please provide a password for encryption',
+			true,
+			true,
+			await SessionPasswordService.getByPathAsync( newFilepath )
+		);
 
-		// if the password is unknown, prompt for it
-		if ( !pwh ){
-			// prompt for password
-			const pwm = new PluginPasswordModal(
-				this.plugin.app,
-				'Please provide a password for encryption',
-				true,
-				true,
-				await SessionPasswordService.getByPathAsync( newFilepath )
-			);
-			
-			try{
-				pwh = await pwm.openAsync();
-			}catch(e){
-				return; // cancelled
-			}	
+		let pwh : PasswordAndHint;
+		try{
+			pwh = await pwm.openAsync();
+		}catch(e){
+			return; // cancelled
 		}
 
 		// create the new file
