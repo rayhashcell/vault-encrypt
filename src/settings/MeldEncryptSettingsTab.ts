@@ -68,11 +68,14 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Remember passwords during this session')
-			.setDesc('Keep successfully used passwords in memory for this Obsidian session. Cached passwords are cleared when this is disabled, when Obsidian closes, or when the timeout expires. Open whole-note encrypted tabs lock when the timeout expires.')
+			.setDesc('Keep successfully used passwords in memory for this Obsidian session. Cached passwords are cleared when this is disabled, when Obsidian closes, or when the timeout expires. Open whole-note encrypted tabs lock when their remembered password expires.')
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.settings.rememberPassword)
 					.onChange( async value => {
+						if ( !value ){
+							await this.plugin.clearPasswordCacheAndLockEncryptedNotes();
+						}
 						this.settings.rememberPassword = value;
 						await this.plugin.saveSettings();
 						SessionPasswordService.setActive( this.settings.rememberPassword );
@@ -91,6 +94,9 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 						.setValue( this.settings.rememberPasswordLevel )
 						.onChange( async value => {
 							DevConsole.debug( 'rememberPasswordLevelSetting.onChange', { value } );
+							if ( this.settings.rememberPasswordLevel != value ){
+								await this.plugin.clearPasswordCacheAndLockEncryptedNotes();
+							}
 							this.settings.rememberPasswordLevel = value;
 							await this.plugin.saveSettings();
 							SessionPasswordService.setLevel( this.settings.rememberPasswordLevel );
@@ -117,7 +123,7 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 		
 		const pwTimeoutSetting = new Setting(containerEl)
-			.setDesc('0 keeps cached passwords until Obsidian closes. 1-120 clears the cache after that many minutes; the timer refreshes when a cached password is used or saved.')
+			.setDesc('0 keeps cached passwords until Obsidian closes. 1-120 clears remembered passwords after that many minutes; the timer refreshes only after a password is successfully used or saved.')
 			.addSlider( slider => {
 				slider
 					.setLimits(0, 120, 1)

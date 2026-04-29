@@ -126,7 +126,7 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 		try{
 
 			// try to get password from session password service
-			let password = await SessionPasswordService.getByFile( file );
+			let password = await SessionPasswordService.peekByFile( file );
 
 			if ( password.password == '' ){
 				// ask for password
@@ -157,7 +157,7 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 			throw new Error( 'Unable to decrypt file' );
 		}
 
-		let passwordAndHint = await SessionPasswordService.getByFile( file );
+		let passwordAndHint = await SessionPasswordService.peekByFile( file );
 		if ( passwordAndHint.password != '' ){
 			// try to decrypt using saved password
 			const decryptedContent = await this.decryptFile( file, passwordAndHint.password );

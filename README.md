@@ -38,6 +38,7 @@ Information about the latest release can be found on the [release notes](https:/
 - Changed the whole-note encrypted file extension to `.cenc` and limited supported encrypted file data to the v2 format.
 - Updated inline encryption to use the new `🛡️@v2` marker format, including Reading view marker rendering and the offline `mdenc` tools.
 - Simplified remembered-password sharing to Vault or File scope, added optional confirmation before opening notes with a remembered password, and auto-lock open encrypted notes when the password cache expires.
+- Refined remembered-password timeout semantics so prefilled password reads do not extend the timeout, successful password use or save refreshes it, and File scope expires per file.
 - Removed legacy crypto helpers, obsolete inline marker support, external password-file caching, and the empty-selection text prompt for inline encryption.
 - Refined settings labels, password visibility controls, unsupported-format handling, and related documentation.
 

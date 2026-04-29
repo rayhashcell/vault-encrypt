@@ -73,19 +73,24 @@ export class EncryptedMarkdownView extends MarkdownView {
 				return;
 			}
 
-			this.passwordAndHint = await SessionPasswordService.getByFile( file );
-			this.passwordAndHint.hint = this.encryptedData.hint;
-			const rememberedPasswordAndHint = this.passwordAndHint;
+			const rememberedPasswordAndHint: PasswordAndHint = {
+				...await SessionPasswordService.peekByFile( file ),
+				hint: this.encryptedData.hint,
+			};
 
 			// try to decrypt the file content
 			let decryptedText: string|null = null;
 			let nextPasswordPromptDefault: PasswordAndHint = { password: '', hint: this.encryptedData.hint };
+			let nextPasswordPromptUsesRememberedPassword = false;
+			let passwordCameFromCache = false;
 
 			if (
 				rememberedPasswordAndHint.password.length > 0
 				&& !this.pluginSettings.confirmRememberedPasswordBeforeOpen
 			) {
+				this.passwordAndHint = rememberedPasswordAndHint;
 				decryptedText = await FileDataHelper.decrypt( this.encryptedData, this.passwordAndHint.password );
+				passwordCameFromCache = decryptedText != null;
 			}
 
 			if (
@@ -93,18 +98,37 @@ export class EncryptedMarkdownView extends MarkdownView {
 				&& this.pluginSettings.confirmRememberedPasswordBeforeOpen
 			) {
 				nextPasswordPromptDefault = rememberedPasswordAndHint;
+				nextPasswordPromptUsesRememberedPassword = true;
 			}
 
 			while( decryptedText == null ){
+				const promptUsesRememberedPassword = nextPasswordPromptUsesRememberedPassword;
 				// prompt for password
-				this.passwordAndHint = await new PluginPasswordModal(
+				const passwordModal = new PluginPasswordModal(
 					this.app,
 					`Decrypting "${file.basename}"`,
 					false,
 					false,
 					nextPasswordPromptDefault
-				).open2Async();
+				);
+				let rememberedPasswordExpiryWatcher: number | null = null;
+				try {
+					if ( promptUsesRememberedPassword ){
+						rememberedPasswordExpiryWatcher = window.setInterval( () => {
+							if ( !SessionPasswordService.hasUnexpiredByFile( file ) ){
+								new Notice('Remembered password expired. Password dialog closed.');
+								passwordModal.close();
+							}
+						}, 1000 );
+					}
+					this.passwordAndHint = await passwordModal.open2Async();
+				} finally {
+					if ( rememberedPasswordExpiryWatcher != null ){
+						window.clearInterval( rememberedPasswordExpiryWatcher );
+					}
+				}
 				nextPasswordPromptDefault = { password: '', hint: this.encryptedData.hint };
+				nextPasswordPromptUsesRememberedPassword = false;
 
 				if ( this.passwordAndHint == null ) {
 					// user cancelled
@@ -112,9 +136,24 @@ export class EncryptedMarkdownView extends MarkdownView {
 					return;
 				}
 
+				if (
+					promptUsesRememberedPassword
+					&& !SessionPasswordService.hasUnexpiredByFile( file )
+				) {
+					this.passwordAndHint = null;
+					new Notice('Remembered password expired. Password dialog closed.');
+					this.leaf.detach();
+					return;
+				}
+
 				decryptedText = await FileDataHelper.decrypt( this.encryptedData, this.passwordAndHint.password );
 				if ( decryptedText == null ) {
 					new Notice('Decryption failed');
+				}else{
+					passwordCameFromCache = (
+						promptUsesRememberedPassword
+						&& this.passwordAndHint.password == rememberedPasswordAndHint.password
+					);
 				}
 			}
 
@@ -124,7 +163,9 @@ export class EncryptedMarkdownView extends MarkdownView {
 			}
 
 			if ( this.passwordAndHint != null ) {
-				SessionPasswordService.putByFile( this.passwordAndHint, file );
+				if ( !passwordCameFromCache || !SessionPasswordService.touchByFile( file ) ){
+					SessionPasswordService.putByFile( this.passwordAndHint, file );
+				}
 			}
 
 			this.setUnencryptedViewData( decryptedText, false );
@@ -355,7 +396,7 @@ export class EncryptedMarkdownView extends MarkdownView {
 			`Change password for "${this.file.basename}"`,
 			true,
 			true,
-			await SessionPasswordService.getByFile( this.file )
+			await SessionPasswordService.peekByFile( this.file )
 		);
 			
 		try{

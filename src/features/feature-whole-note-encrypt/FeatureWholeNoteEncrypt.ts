@@ -3,7 +3,7 @@ import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
 import { EncryptedMarkdownView } from "./EncryptedMarkdownView.ts";
 import { MarkdownView, TFolder, normalizePath, moment, TFile, Notice } from "obsidian";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
-import { PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
+import { ExpiredSessionPasswordCacheItem, PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
 import { FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.ts";
 import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../../services/Constants.ts";
 import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
@@ -189,6 +189,30 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		return lockedCount;
 	}
 
+	public async lockAndCloseExpiredEncryptedNotes(
+		expiredItems: ExpiredSessionPasswordCacheItem[]
+	): Promise<number> {
+		if ( expiredItems.some( item => item.isVault ) ){
+			return await this.lockAndCloseAllEncryptedNotes();
+		}
+
+		const expiredFileKeys = new Set( expiredItems.map( item => item.key ) );
+		const leaves = this.plugin.app.workspace.getLeavesOfType( EncryptedMarkdownView.VIEW_TYPE );
+		let lockedCount = 0;
+		for ( const leaf of leaves ) {
+			const view = leaf.view as EncryptedMarkdownView;
+			if ( view == null || view.file == null ){
+				continue;
+			}
+			if ( !expiredFileKeys.has( SessionPasswordService.getFileScopedCacheKey( view.file ) ) ){
+				continue;
+			}
+			await view.lockAndClose();
+			lockedCount++;
+		}
+		return lockedCount;
+	}
+
 	private getDefaultFileFolder() : TFolder {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 
@@ -209,7 +233,7 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 			'Please provide a password for encryption',
 			true,
 			true,
-			await SessionPasswordService.getByPathAsync( newFilepath )
+			await SessionPasswordService.peekByPathAsync( newFilepath )
 		);
 
 		let pwh : PasswordAndHint;

@@ -66,7 +66,7 @@ export default class MeldEncrypt extends Plugin {
 		super.onunload();
 	}
 
-	private async clearPasswordCacheAndLockEncryptedNotes(): Promise<void> {
+	public async clearPasswordCacheAndLockEncryptedNotes(): Promise<void> {
 		const lockedCount = await this.wholeNoteEncryptFeature.lockAndCloseAllEncryptedNotes();
 		const itemsCleared = SessionPasswordService.clear();
 		new Notice(
@@ -81,15 +81,14 @@ export default class MeldEncrypt extends Plugin {
 			return;
 		}
 
-		const sessionExpired = SessionPasswordService.clearIfExpired();
-		if (!sessionExpired){
+		const expiredItems = SessionPasswordService.clearExpired();
+		if ( expiredItems.length == 0 ){
 			return;
 		}
 
 		this.isAutoLockingExpiredSession = true;
 		try {
-			const lockedCount = await this.wholeNoteEncryptFeature.lockAndCloseAllEncryptedNotes();
-			SessionPasswordService.markExpiryHandled();
+			const lockedCount = await this.wholeNoteEncryptFeature.lockAndCloseExpiredEncryptedNotes( expiredItems );
 			new Notice(
 				lockedCount > 0
 					? 'Session password expired. Open encrypted notes locked.'

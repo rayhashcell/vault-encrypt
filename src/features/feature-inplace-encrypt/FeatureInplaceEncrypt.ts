@@ -264,22 +264,28 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			return;
 		}
 
-		// decrypt
-		if ( await this.showDecryptedResultForPassword( decryptable, pw ) ){
-			SessionPasswordService.putByPath(
+		const didDecrypt = await this.showDecryptedResultForPassword(
+			decryptable,
+			pw,
+			() => SessionPasswordService.putByPath(
 				{
 					password: pw,
 					hint: decryptable.hint
 				},
 				path
-			);
-		}else{
+			)
+		);
+		if ( !didDecrypt ){
 			new Notice('❌ Decryption failed!');
 		}
 
 	}
 	
-	private async showDecryptedResultForPassword( decryptable: Decryptable, pw:string ): Promise<boolean> {
+	private async showDecryptedResultForPassword(
+		decryptable: Decryptable,
+		pw:string,
+		onDecryptSuccess?: () => void
+	): Promise<boolean> {
 		const crypto =  CryptoHelperFactory.BuildFromDecryptableOrThrow( decryptable );
 
 		const decryptedText = await crypto.decryptFromBase64( decryptable.base64CipherText, pw );
@@ -288,6 +294,8 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		if (decryptedText === null) {
 			return false;
 		}
+
+		onDecryptSuccess?.();
 		
 		return new Promise<boolean>( (resolve) => {
 			const decryptModal = new DecryptModal(this.plugin.app, '🔓', decryptedText );
@@ -324,14 +332,15 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 	}
 
 	private async showDecryptedTextIfPasswordKnown( filePath: string, decryptable: Decryptable ) : Promise<boolean> {
-		const bestGuessPasswordAndHint = await SessionPasswordService.getByPathAsync(filePath);
-		if ( bestGuessPasswordAndHint.password == null ){
+		const bestGuessPasswordAndHint = await SessionPasswordService.peekByPathAsync(filePath);
+		if ( bestGuessPasswordAndHint.password.length == 0 ){
 			return false;
 		}
 
 		return await this.showDecryptedResultForPassword(
 			decryptable,
-			bestGuessPasswordAndHint.password
+			bestGuessPasswordAndHint.password,
+			() => SessionPasswordService.touchByPath( filePath )
 		);
 	}
 
@@ -376,7 +385,6 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			})
 		;
 	}
-
 	private processEncryptCommand(
 		checking: boolean,
 		editor: Editor
@@ -645,10 +653,12 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		// determine default password and hint
 		let defaultPassword = '';
 		let defaultHint = selectionAnalysis.decryptable?.hint;
+		let defaultPasswordCameFromCache = false;
 		if ( this.pluginSettings.rememberPassword ){
-			const bestGuessPasswordAndHint = SessionPasswordService.getByPath( activeFile.path );
+			const bestGuessPasswordAndHint = SessionPasswordService.peekByPath( activeFile.path );
 
 			defaultPassword = bestGuessPasswordAndHint.password;
+			defaultPasswordCameFromCache = defaultPassword.length > 0;
 			defaultHint = defaultHint ?? bestGuessPasswordAndHint.hint;
 		}
 
@@ -670,13 +680,21 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			const pw = pwModal.resultPassword ?? ''
 			const hint = pwModal.resultHint ?? '';
 
+			if (
+				defaultPasswordCameFromCache
+				&& !SessionPasswordService.hasUnexpiredByPath( activeFile.path )
+			) {
+				new Notice('Remembered password expired. Please run the command again.');
+				return;
+			}
+
 			if (selectionAnalysis.canEncrypt) {
 
 				const encryptable = new Encryptable();
 				encryptable.text = selectionText;
 				encryptable.hint = hint;
 
-				this.encryptSelection(
+				await this.encryptSelection(
 					editor,
 					encryptable,
 					pw,
@@ -686,7 +704,13 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 				);
 
 				// remember password
-				SessionPasswordService.putByPath( { password:pw, hint: hint }, activeFile.path );
+				this.rememberPasswordAfterSuccessfulInlineUse(
+					activeFile.path,
+					pw,
+					hint,
+					defaultPassword,
+					defaultPasswordCameFromCache
+				);
 
 			} else if ( selectionAnalysis.decryptable ) {
 
@@ -700,7 +724,13 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 
 				// remember password?
 				if ( decryptSuccess ) {
-					SessionPasswordService.putByPath( { password:pw, hint: hint }, activeFile.path );
+					this.rememberPasswordAfterSuccessfulInlineUse(
+						activeFile.path,
+						pw,
+						hint,
+						defaultPassword,
+						defaultPasswordCameFromCache
+					);
 				}
 				
 			}
@@ -708,6 +738,24 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		pwModal.open();
 
 		return true;
+	}
+
+	private rememberPasswordAfterSuccessfulInlineUse(
+		path: string,
+		password: string,
+		hint: string,
+		defaultPassword: string,
+		defaultPasswordCameFromCache: boolean
+	): void {
+		if (
+			defaultPasswordCameFromCache
+			&& password == defaultPassword
+			&& SessionPasswordService.touchByPath( path )
+		) {
+			return;
+		}
+
+		SessionPasswordService.putByPath( { password, hint }, path );
 	}
 
 	private async encryptSelection(
