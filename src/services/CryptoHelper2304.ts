@@ -6,14 +6,12 @@ export class CryptoHelper2304 implements ICryptoHelper {
 	public iterations: number;
 
 	constructor( vectorSize: number, saltSize: number, iterations: number ){
-		//console.debug('new CryptoHelper2304', {vectorSize, saltSize, iterations});
 		this.vectorSize = vectorSize;
 		this.saltSize = saltSize;
 		this.iterations = iterations;
 	}
 
 	private async deriveKey( password:string, salt:Uint8Array ) :Promise<CryptoKey> {
-		// console.trace('CryptoHelper2304.deriveKey');
 		//See: https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto
 		const utf8Encoder	= new TextEncoder();
 		const buffer     = utf8Encoder.encode(password);
@@ -24,29 +22,22 @@ export class CryptoHelper2304 implements ICryptoHelper {
 			/*extractable*/ false,
 			/*keyUsages*/ ['deriveKey']
 		);
-		
-		//console.time('CryptoHelper2304.deriveKey');
-		try{
-			const privateKey = await crypto.subtle.deriveKey(
-				/*algorithm*/ {
-					name: 'PBKDF2',
-					hash: 'SHA-512',
-					salt,
-					iterations: this.iterations,
-				},
-				/*baseKey*/ key,
-				/*derivedKeyAlgorithm*/ {
-					name: 'AES-GCM',
-					length: 256
-				},
-				/*extractable*/ false,
-				/*keyUsages*/ ['encrypt', 'decrypt']
-			);
-			
-			return privateKey;
-		}finally{
-			//console.timeEnd('CryptoHelper2304.deriveKey');
-		}
+
+		return await crypto.subtle.deriveKey(
+			/*algorithm*/ {
+				name: 'PBKDF2',
+				hash: 'SHA-512',
+				salt,
+				iterations: this.iterations,
+			},
+			/*baseKey*/ key,
+			/*derivedKeyAlgorithm*/ {
+				name: 'AES-GCM',
+				length: 256
+			},
+			/*extractable*/ false,
+			/*keyUsages*/ ['encrypt', 'decrypt']
+		);
 	}
 
 	private async encryptToBytes( text: string, password: string ): Promise<Uint8Array> {
@@ -109,49 +100,47 @@ export class CryptoHelper2304 implements ICryptoHelper {
 	private async decryptFromBytes(
 		encryptedBytes: Uint8Array,
 		password: string
-	): Promise<string|null> {
-		try {
-			
-			let offset: number;
-			let nextOffset : number|undefined;
-			
-			// extract iv
-			offset = 0;
-			nextOffset = offset + this.vectorSize;
-			const vector = encryptedBytes.slice(offset, nextOffset);
-			
-			// extract salt
-			offset = nextOffset;
-			nextOffset = offset + this.saltSize;
-			const salt = encryptedBytes.slice(offset, nextOffset);
-			
-			// extract encrypted text
-			offset = nextOffset;
-			nextOffset = undefined;
-			const encryptedTextBytes = encryptedBytes.slice(offset);
-			
-			const key = await this.deriveKey(password, salt);
-			
-			// decrypt into bytes
-			const decryptedBytes = await crypto.subtle.decrypt(
+		): Promise<string|null> {
+			try {
+				let offset: number;
+				let nextOffset : number|undefined;
+
+				// extract iv
+				offset = 0;
+				nextOffset = offset + this.vectorSize;
+				const vector = encryptedBytes.slice(offset, nextOffset);
+
+				// extract salt
+				offset = nextOffset;
+				nextOffset = offset + this.saltSize;
+				const salt = encryptedBytes.slice(offset, nextOffset);
+
+				// extract encrypted text
+				offset = nextOffset;
+				nextOffset = undefined;
+				const encryptedTextBytes = encryptedBytes.slice(offset);
+
+				const key = await this.deriveKey(password, salt);
+
+				// decrypt into bytes
+				const decryptedBytes = await crypto.subtle.decrypt(
 				/*algorithm*/ {
 					name: 'AES-GCM',
 					iv: vector
 				},
 				/*key*/ key,
-				/*data*/ encryptedTextBytes
-			);
-			
-			// convert bytes to text
-			const utf8Decoder	= new TextDecoder();
-			const decryptedText = utf8Decoder.decode(decryptedBytes);
-			return decryptedText;
-			
-		} catch (e) {
-			//console.error(e);
-			return null;
+					/*data*/ encryptedTextBytes
+				);
+
+				// convert bytes to text
+				const utf8Decoder	= new TextDecoder();
+				const decryptedText = utf8Decoder.decode(decryptedBytes);
+				return decryptedText;
+
+			} catch (e) {
+				return null;
+			}
 		}
-	}
 
 	public async decryptFromBase64( base64Encoded: string, password: string ): Promise<string|null> {
 		try {

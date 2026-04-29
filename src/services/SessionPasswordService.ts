@@ -1,6 +1,7 @@
 import { TFile } from "obsidian";
 import { MemoryCache } from "./MemoryCache.ts";
 import { Utils } from "./Utils.ts";
+import { DevConsole } from "./DevConsole.ts";
 
 export type PasswordAndHint = {
 	password: string;
@@ -48,7 +49,6 @@ export class SessionPasswordService{
 	}
 
 	public static setLevel( level: string ) {
-		//console.debug( 'SessionPasswordService.setLevel', { level, allLevels: this.allLevels } );
 		if ( SessionPasswordService.allLevels.contains(level) ){
 			SessionPasswordService.level = level;
 			SessionPasswordService.updateExpiryTime();
@@ -57,7 +57,6 @@ export class SessionPasswordService{
 		SessionPasswordService.level = SessionPasswordService.LevelFilename;
 		this.clear();
 		SessionPasswordService.updateExpiryTime();
-		//console.debug( 'SessionPasswordService.level', { level: SessionPasswordService.level } );
 	}
 
 	public static updateExpiryTime() : void {
@@ -192,7 +191,12 @@ export class SessionPasswordService{
 	}
 
 	private static getByKey( key: string, defaultValue: PasswordAndHint ): PasswordAndHint {
-		console.debug( 'SessionPasswordService.getByKey', { 'level': SessionPasswordService.level, key, defaultValue } );
+		DevConsole.debug( 'SessionPasswordService.getByKey', {
+			level: SessionPasswordService.level,
+			key,
+			hasDefaultPassword: defaultValue.password.length > 0,
+			hasDefaultHint: defaultValue.hint.length > 0,
+		} );
 		return this.cache.get( key, defaultValue );
 	}
 }

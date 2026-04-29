@@ -3,6 +3,7 @@ import { IMeldEncryptPluginFeature } from "../features/IMeldEncryptPluginFeature
 import { SessionPasswordService } from "../services/SessionPasswordService.ts";
 import MeldEncrypt from "../main.ts";
 import { IMeldEncryptPluginSettings } from "./MeldEncryptPluginSettings.ts";
+import { DevConsole } from "../services/DevConsole.ts";
 
 export default class MeldEncryptSettingsTab extends PluginSettingTab {
 	plugin: MeldEncrypt;
@@ -82,19 +83,19 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 		const rememberPasswordLevelSetting = new Setting(containerEl)
 			.setName('Share remembered passwords by')
-			.setDesc( this.buildRememberPasswordDescription() )
-			.addDropdown( cb =>{
-				cb
-				.addOption( SessionPasswordService.LevelVault, 'Vault')
-				.addOption( SessionPasswordService.LevelFilename, 'File')
-					.setValue( this.settings.rememberPasswordLevel )
-					.onChange( async value => {
-						console.debug( 'rememberPasswordLevelSetting.onChange', { value } );
-						this.settings.rememberPasswordLevel = value;
-						await this.plugin.saveSettings();
-						SessionPasswordService.setLevel( this.settings.rememberPasswordLevel );
-						updateRememberPasswordSettingsUi();
-					})
+				.setDesc( this.buildRememberPasswordDescription() )
+				.addDropdown( cb =>{
+					cb
+						.addOption( SessionPasswordService.LevelVault, 'Vault')
+						.addOption( SessionPasswordService.LevelFilename, 'File')
+						.setValue( this.settings.rememberPasswordLevel )
+						.onChange( async value => {
+							DevConsole.debug( 'rememberPasswordLevelSetting.onChange', { value } );
+							this.settings.rememberPasswordLevel = value;
+							await this.plugin.saveSettings();
+							SessionPasswordService.setLevel( this.settings.rememberPasswordLevel );
+							updateRememberPasswordSettingsUi();
+						})
 				;
 			})
 		;

@@ -6,6 +6,7 @@ import { SessionPasswordService } from './services/SessionPasswordService.ts';
 import FeatureInplaceEncrypt from './features/feature-inplace-encrypt/FeatureInplaceEncrypt.ts';
 import FeatureConvertNote from './features/feature-convert-note/FeatureConvertNote.ts';
 import FeatureWholeNoteEncryptV2 from './features/feature-whole-note-encrypt/FeatureWholeNoteEncrypt.ts';
+import { DevConsole } from './services/DevConsole.ts';
 
 export default class MeldEncrypt extends Plugin {
 
@@ -39,17 +40,14 @@ export default class MeldEncrypt extends Plugin {
 
 		this.addCommand({
 			id: 'custom-encrypt-clear-password-cache',
-			name: 'Clear Session Password Cache',
+			name: 'Clear Session Password Cache and Lock Notes',
 			icon: 'shield-ellipsis',
-			callback: () => {
-				const itemsCleared = SessionPasswordService.clear();
-				new Notice( `Items cleared: ${itemsCleared}` );
-			},
+			callback: async () => await this.clearPasswordCacheAndLockEncryptedNotes(),
 		});
 
 		this.registerInterval(
 			window.setInterval(
-				() => this.lockEncryptedNotesIfSessionExpired().catch(console.error),
+				() => this.lockEncryptedNotesIfSessionExpired().catch( error => DevConsole.error(error) ),
 				1000
 			)
 		);
@@ -66,6 +64,16 @@ export default class MeldEncrypt extends Plugin {
 			f.onunload();
 		});
 		super.onunload();
+	}
+
+	private async clearPasswordCacheAndLockEncryptedNotes(): Promise<void> {
+		const lockedCount = await this.wholeNoteEncryptFeature.lockAndCloseAllEncryptedNotes();
+		const itemsCleared = SessionPasswordService.clear();
+		new Notice(
+			lockedCount > 0
+				? `Locked encrypted notes: ${lockedCount}. Remembered passwords cleared: ${itemsCleared}.`
+				: `Remembered passwords cleared: ${itemsCleared}.`
+		);
 	}
 
 	private async lockEncryptedNotesIfSessionExpired() {

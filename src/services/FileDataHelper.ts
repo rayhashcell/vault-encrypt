@@ -39,12 +39,11 @@ export class FileDataHelper{
 	}
 }
 
-export class JsonFileEncoding {
+	export class JsonFileEncoding {
 
-	public static encode( data: FileData ) : string{
-		//console.debug( 'JsonFileEncoding.encode', {data} );
-		return JSON.stringify(data, null, 2);
-	}
+		public static encode( data: FileData ) : string{
+			return JSON.stringify(data, null, 2);
+		}
 
 	public static isEncoded( text: string ) : boolean {
 		try {
@@ -55,10 +54,9 @@ export class JsonFileEncoding {
 		}
 	}
 
-	public static decode( encodedText:string ) : FileData {
-		//console.debug('JsonFileEncoding.decode',{encodedText});
-		if ( encodedText === '' ){
-			return new FileData( FileDataHelper.DEFAULT_VERSION, '', '' );
+		public static decode( encodedText:string ) : FileData {
+			if ( encodedText === '' ){
+				return new FileData( FileDataHelper.DEFAULT_VERSION, '', '' );
 		}
 		return JSON.parse( encodedText ) as FileData;
 	}
