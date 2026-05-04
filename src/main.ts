@@ -7,6 +7,7 @@ import FeatureInplaceEncrypt from './features/feature-inplace-encrypt/FeatureInp
 import FeatureConvertNote from './features/feature-convert-note/FeatureConvertNote.ts';
 import FeatureWholeNoteEncryptV2 from './features/feature-whole-note-encrypt/FeatureWholeNoteEncrypt.ts';
 import { DevConsole } from './services/DevConsole.ts';
+import FeatureAppearance, { DEFAULT_RAINBOW_FOLDER_COLORS } from './features/feature-appearance/FeatureAppearance.ts';
 
 export default class MeldEncrypt extends Plugin {
 
@@ -24,6 +25,7 @@ export default class MeldEncrypt extends Plugin {
 		this.wholeNoteEncryptFeature = new FeatureWholeNoteEncryptV2();
 		this.enabledFeatures.push(
 			this.wholeNoteEncryptFeature,
+			new FeatureAppearance(),
 			new FeatureConvertNote(),
 			new FeatureInplaceEncrypt(),
 		);
@@ -114,6 +116,14 @@ export default class MeldEncrypt extends Plugin {
 			featureInplaceEncrypt:{
 				markerSearchLimit: 10000,
 				showMarkerWhenReadingDefault: true
+			},
+
+			featureAppearance: {
+				readableLineHeight: false,
+				rainbowFileExplorer: false,
+				rainbowFolderColors: DEFAULT_RAINBOW_FOLDER_COLORS,
+				fileExplorerIcons: false,
+				markdownExtensionBadge: false,
 			}
 		}
 
@@ -131,6 +141,13 @@ export default class MeldEncrypt extends Plugin {
 			featureInplaceEncrypt:{
 				markerSearchLimit: loadedSettings?.featureInplaceEncrypt?.markerSearchLimit ?? DEFAULT_SETTINGS.featureInplaceEncrypt.markerSearchLimit,
 				showMarkerWhenReadingDefault: loadedSettings?.featureInplaceEncrypt?.showMarkerWhenReadingDefault ?? DEFAULT_SETTINGS.featureInplaceEncrypt.showMarkerWhenReadingDefault,
+			},
+			featureAppearance: {
+				readableLineHeight: loadedSettings?.featureAppearance?.readableLineHeight ?? DEFAULT_SETTINGS.featureAppearance.readableLineHeight,
+				rainbowFileExplorer: loadedSettings?.featureAppearance?.rainbowFileExplorer ?? DEFAULT_SETTINGS.featureAppearance.rainbowFileExplorer,
+				rainbowFolderColors: loadedSettings?.featureAppearance?.rainbowFolderColors ?? DEFAULT_SETTINGS.featureAppearance.rainbowFolderColors,
+				fileExplorerIcons: loadedSettings?.featureAppearance?.fileExplorerIcons ?? DEFAULT_SETTINGS.featureAppearance.fileExplorerIcons,
+				markdownExtensionBadge: loadedSettings?.featureAppearance?.markdownExtensionBadge ?? DEFAULT_SETTINGS.featureAppearance.markdownExtensionBadge,
 			}
 		};
 
