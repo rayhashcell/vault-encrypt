@@ -8,9 +8,12 @@ const READABLE_LINE_HEIGHT_CLASS = 'custom-encrypt-readable-line-height';
 const RAINBOW_FILE_EXPLORER_CLASS = 'custom-encrypt-rainbow-file-explorer';
 const FILE_EXPLORER_ICONS_CLASS = 'custom-encrypt-file-explorer-icons';
 const MARKDOWN_EXTENSION_BADGE_CLASS = 'custom-encrypt-markdown-extension-badge';
-const RAINBOW_FOLDER_COLOR_PREFIX = '--custom-encrypt-rainbow-folder-';
+const RAINBOW_FOLDER_LEGACY_COLOR_PREFIX = '--custom-encrypt-rainbow-folder-';
+const RAINBOW_FOLDER_LIGHT_COLOR_PREFIX = '--custom-encrypt-rainbow-folder-light-';
+const RAINBOW_FOLDER_DARK_COLOR_PREFIX = '--custom-encrypt-rainbow-folder-dark-';
+type RainbowFolderTheme = 'light' | 'dark';
 
-export const DEFAULT_RAINBOW_FOLDER_COLORS = [
+const OLD_DEFAULT_RAINBOW_FOLDER_COLORS = [
 	'#e45649',
 	'#da8548',
 	'#b58900',
@@ -20,12 +23,55 @@ export const DEFAULT_RAINBOW_FOLDER_COLORS = [
 	'#a626a4',
 ];
 
+const PREVIOUS_DEFAULT_RAINBOW_FOLDER_COLORS = [
+	'#d84c4c',
+	'#008f7a',
+	'#b98500',
+	'#3f7de8',
+	'#4f8f28',
+	'#8b5bd6',
+	'#d66a2c',
+	'#0098b3',
+	'#c65ac7',
+	'#7c8d1f',
+];
+
+export const DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT = [
+	'#e02f3e',
+	'#008f72',
+	'#bd7800',
+	'#2f78e6',
+	'#438d1f',
+	'#8750d6',
+	'#dc5a1e',
+	'#0095ad',
+	'#c43fc4',
+	'#788a12',
+];
+
+export const DEFAULT_RAINBOW_FOLDER_COLORS_DARK = [
+	'#ff6b73',
+	'#20c9a8',
+	'#ffc247',
+	'#73a7ff',
+	'#8ada70',
+	'#b88cff',
+	'#ff9858',
+	'#40d2e8',
+	'#f084f0',
+	'#cadb58',
+];
+
+export const DEFAULT_RAINBOW_FOLDER_COLORS = DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT;
+
 export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 	private featureSettings: IFeatureAppearanceSettings;
 
 	async onload(plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings): Promise<void> {
 		this.featureSettings = settings.featureAppearance;
-		this.featureSettings.rainbowFolderColors = this.getRainbowFolderColors();
+		this.featureSettings.rainbowFolderColorsLight = this.getRainbowFolderColors('light');
+		this.featureSettings.rainbowFolderColorsDark = this.getRainbowFolderColors('dark');
+		this.featureSettings.rainbowFolderColors = this.featureSettings.rainbowFolderColorsLight;
 		this.applyAppearanceSettings();
 	}
 
@@ -72,18 +118,23 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 			})
 		;
 
-		const colorPickers: ColorComponent[] = [];
+		const lightColorPickers: ColorComponent[] = [];
+		const darkColorPickers: ColorComponent[] = [];
 		new Setting(containerEl)
 			.setName('Rainbow folder colors')
-			.setDesc('Choose the seven colors used for the top-level folder color cycle.')
+			.setDesc('Choose separate ten-color cycles for light and dark themes.')
 			.addButton(button => {
 				button
-					.setButtonText('Reset')
+					.setButtonText('Reset all')
 					.onClick(async () => {
-						this.featureSettings.rainbowFolderColors = [...DEFAULT_RAINBOW_FOLDER_COLORS];
+						this.setRainbowFolderColors('light', [...DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT]);
+						this.setRainbowFolderColors('dark', [...DEFAULT_RAINBOW_FOLDER_COLORS_DARK]);
 						this.applyAppearanceSettings();
-						colorPickers.forEach((colorPicker, index) => {
-							colorPicker.setValue(this.featureSettings.rainbowFolderColors[index]);
+						lightColorPickers.forEach((colorPicker, index) => {
+							colorPicker.setValue(this.featureSettings.rainbowFolderColorsLight[index]);
+						});
+						darkColorPickers.forEach((colorPicker, index) => {
+							colorPicker.setValue(this.featureSettings.rainbowFolderColorsDark[index]);
 						});
 						await saveSettingCallback();
 					})
@@ -91,24 +142,23 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 			})
 		;
 
-		this.getRainbowFolderColors().forEach((color, index) => {
-			new Setting(containerEl)
-				.setName(`Folder color ${index + 1}`)
-				.addColorPicker(colorPicker => {
-					colorPickers[index] = colorPicker;
-					colorPicker
-						.setValue(color)
-						.onChange(async value => {
-							const colors = this.getRainbowFolderColors();
-							colors[index] = value;
-							this.featureSettings.rainbowFolderColors = colors;
-							this.applyAppearanceSettings();
-							await saveSettingCallback();
-						})
-					;
-				})
-			;
-		});
+		this.buildRainbowFolderColorSettings(
+			containerEl,
+			'Light theme folder colors',
+			'Light folder color',
+			'light',
+			lightColorPickers,
+			saveSettingCallback
+		);
+
+		this.buildRainbowFolderColorSettings(
+			containerEl,
+			'Dark theme folder colors',
+			'Dark folder color',
+			'dark',
+			darkColorPickers,
+			saveSettingCallback
+		);
 
 		new Setting(containerEl)
 			.setName('Show file explorer type icons')
@@ -126,8 +176,8 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		;
 
 		new Setting(containerEl)
-			.setName('Show Markdown extension badges')
-			.setDesc('Shows an MD badge at the right edge of Markdown files in the file explorer.')
+			.setName('Show file extension badges')
+			.setDesc('Shows file extension badges at the right edge of files in the file explorer.')
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.featureSettings.markdownExtensionBadge)
@@ -166,23 +216,119 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 	}
 
 	private applyRainbowFolderColors(): void {
-		this.getRainbowFolderColors().forEach((color, index) => {
-			document.body.style.setProperty(`${RAINBOW_FOLDER_COLOR_PREFIX}${index + 1}`, color);
+		this.getRainbowFolderColors('light').forEach((color, index) => {
+			document.body.style.setProperty(`${RAINBOW_FOLDER_LIGHT_COLOR_PREFIX}${index + 1}`, color);
+		});
+		this.getRainbowFolderColors('dark').forEach((color, index) => {
+			document.body.style.setProperty(`${RAINBOW_FOLDER_DARK_COLOR_PREFIX}${index + 1}`, color);
 		});
 	}
 
 	private clearRainbowFolderColors(): void {
 		DEFAULT_RAINBOW_FOLDER_COLORS.forEach((_, index) => {
-			document.body.style.removeProperty(`${RAINBOW_FOLDER_COLOR_PREFIX}${index + 1}`);
+			document.body.style.removeProperty(`${RAINBOW_FOLDER_LEGACY_COLOR_PREFIX}${index + 1}`);
+			document.body.style.removeProperty(`${RAINBOW_FOLDER_LIGHT_COLOR_PREFIX}${index + 1}`);
+			document.body.style.removeProperty(`${RAINBOW_FOLDER_DARK_COLOR_PREFIX}${index + 1}`);
 		});
 	}
 
-	private getRainbowFolderColors(): string[] {
-		const colors = this.featureSettings.rainbowFolderColors ?? [];
-		return DEFAULT_RAINBOW_FOLDER_COLORS.map((fallbackColor, index) => {
-			const color = colors[index];
+	private buildRainbowFolderColorSettings(
+		containerEl: HTMLElement,
+		sectionName: string,
+		colorNamePrefix: string,
+		theme: RainbowFolderTheme,
+		colorPickers: ColorComponent[],
+		saveSettingCallback: () => Promise<void>
+	): void {
+		new Setting(containerEl)
+			.setName(sectionName)
+			.setDesc(`Used when Obsidian is in ${theme} theme.`)
+			.addButton(button => {
+				button
+					.setButtonText('Reset')
+					.onClick(async () => {
+						this.setRainbowFolderColors(theme, [...this.getDefaultRainbowFolderColors(theme)]);
+						this.applyAppearanceSettings();
+						colorPickers.forEach((colorPicker, index) => {
+							colorPicker.setValue(this.getRainbowFolderColors(theme)[index]);
+						});
+						await saveSettingCallback();
+					})
+				;
+			})
+		;
+
+		this.getRainbowFolderColors(theme).forEach((color, index) => {
+			new Setting(containerEl)
+				.setName(`${colorNamePrefix} ${index + 1}`)
+				.addColorPicker(colorPicker => {
+					colorPickers[index] = colorPicker;
+					colorPicker
+						.setValue(color)
+						.onChange(async value => {
+							const colors = this.getRainbowFolderColors(theme);
+							colors[index] = value;
+							this.setRainbowFolderColors(theme, colors);
+							this.applyAppearanceSettings();
+							await saveSettingCallback();
+						})
+					;
+				})
+			;
+		});
+	}
+
+	private setRainbowFolderColors(theme: RainbowFolderTheme, colors: string[]): void {
+		if (theme === 'light') {
+			this.featureSettings.rainbowFolderColorsLight = colors;
+			this.featureSettings.rainbowFolderColors = colors;
+			return;
+		}
+		this.featureSettings.rainbowFolderColorsDark = colors;
+	}
+
+	private getRainbowFolderColors(theme: RainbowFolderTheme): string[] {
+		const fallbackColors = this.getDefaultRainbowFolderColors(theme);
+		const configuredColors = this.getConfiguredRainbowFolderColors(theme);
+		return fallbackColors.map((fallbackColor, index) => {
+			const color = configuredColors[index];
 			return this.isHexColor(color) ? color : fallbackColor;
 		});
+	}
+
+	private getConfiguredRainbowFolderColors(theme: RainbowFolderTheme): string[] {
+		const themeColors = theme === 'light'
+			? this.featureSettings.rainbowFolderColorsLight
+			: this.featureSettings.rainbowFolderColorsDark;
+
+		if (themeColors?.length > 0) {
+			return this.isDefaultRainbowFolderPalette(themeColors) ? [] : themeColors;
+		}
+
+		const legacyColors = this.featureSettings.rainbowFolderColors ?? [];
+		return this.isDefaultRainbowFolderPalette(legacyColors) ? [] : legacyColors;
+	}
+
+	private getDefaultRainbowFolderColors(theme: RainbowFolderTheme): string[] {
+		return theme === 'light'
+			? DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT
+			: DEFAULT_RAINBOW_FOLDER_COLORS_DARK;
+	}
+
+	private isDefaultRainbowFolderPalette(colors: string[]): boolean {
+		return [
+			OLD_DEFAULT_RAINBOW_FOLDER_COLORS,
+			PREVIOUS_DEFAULT_RAINBOW_FOLDER_COLORS,
+			DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT,
+			DEFAULT_RAINBOW_FOLDER_COLORS_DARK,
+		].some(defaultColors => this.isMatchingRainbowFolderPalette(colors, defaultColors));
+	}
+
+	private isMatchingRainbowFolderPalette(colors: string[], defaultColors: string[]): boolean {
+		return colors.length === defaultColors.length
+			&& defaultColors.every((color, index) => {
+				return colors[index]?.toLowerCase() === color;
+			});
 	}
 
 	private isHexColor(color: string | undefined): color is string {

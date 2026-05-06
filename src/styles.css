@@ -35,70 +35,143 @@ body.custom-encrypt-readable-line-height {
 
 /* Rainbow folders: top-level folder color cascades to descendants. */
 body.custom-encrypt-rainbow-file-explorer .nav-files-container {
-  --rainbow-folder-1: var(--custom-encrypt-rainbow-folder-1, #e45649);
-  --rainbow-folder-2: var(--custom-encrypt-rainbow-folder-2, #da8548);
-  --rainbow-folder-3: var(--custom-encrypt-rainbow-folder-3, #b58900);
-  --rainbow-folder-4: var(--custom-encrypt-rainbow-folder-4, #50a14f);
-  --rainbow-folder-5: var(--custom-encrypt-rainbow-folder-5, #0184bc);
-  --rainbow-folder-6: var(--custom-encrypt-rainbow-folder-6, #4078f2);
-  --rainbow-folder-7: var(--custom-encrypt-rainbow-folder-7, #a626a4);
+  --rainbow-folder-1: var(--custom-encrypt-rainbow-folder-light-1, var(--custom-encrypt-rainbow-folder-1, #e02f3e));
+  --rainbow-folder-2: var(--custom-encrypt-rainbow-folder-light-2, var(--custom-encrypt-rainbow-folder-2, #008f72));
+  --rainbow-folder-3: var(--custom-encrypt-rainbow-folder-light-3, var(--custom-encrypt-rainbow-folder-3, #bd7800));
+  --rainbow-folder-4: var(--custom-encrypt-rainbow-folder-light-4, var(--custom-encrypt-rainbow-folder-4, #2f78e6));
+  --rainbow-folder-5: var(--custom-encrypt-rainbow-folder-light-5, var(--custom-encrypt-rainbow-folder-5, #438d1f));
+  --rainbow-folder-6: var(--custom-encrypt-rainbow-folder-light-6, var(--custom-encrypt-rainbow-folder-6, #8750d6));
+  --rainbow-folder-7: var(--custom-encrypt-rainbow-folder-light-7, var(--custom-encrypt-rainbow-folder-7, #dc5a1e));
+  --rainbow-folder-8: var(--custom-encrypt-rainbow-folder-light-8, var(--custom-encrypt-rainbow-folder-8, #0095ad));
+  --rainbow-folder-9: var(--custom-encrypt-rainbow-folder-light-9, var(--custom-encrypt-rainbow-folder-9, #c43fc4));
+  --rainbow-folder-10: var(--custom-encrypt-rainbow-folder-light-10, var(--custom-encrypt-rainbow-folder-10, #788a12));
+}
+
+body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-files-container {
+  --rainbow-folder-1: var(--custom-encrypt-rainbow-folder-dark-1, var(--custom-encrypt-rainbow-folder-1, #ff6b73));
+  --rainbow-folder-2: var(--custom-encrypt-rainbow-folder-dark-2, var(--custom-encrypt-rainbow-folder-2, #20c9a8));
+  --rainbow-folder-3: var(--custom-encrypt-rainbow-folder-dark-3, var(--custom-encrypt-rainbow-folder-3, #ffc247));
+  --rainbow-folder-4: var(--custom-encrypt-rainbow-folder-dark-4, var(--custom-encrypt-rainbow-folder-4, #73a7ff));
+  --rainbow-folder-5: var(--custom-encrypt-rainbow-folder-dark-5, var(--custom-encrypt-rainbow-folder-5, #8ada70));
+  --rainbow-folder-6: var(--custom-encrypt-rainbow-folder-dark-6, var(--custom-encrypt-rainbow-folder-6, #b88cff));
+  --rainbow-folder-7: var(--custom-encrypt-rainbow-folder-dark-7, var(--custom-encrypt-rainbow-folder-7, #ff9858));
+  --rainbow-folder-8: var(--custom-encrypt-rainbow-folder-dark-8, var(--custom-encrypt-rainbow-folder-8, #40d2e8));
+  --rainbow-folder-9: var(--custom-encrypt-rainbow-folder-dark-9, var(--custom-encrypt-rainbow-folder-9, #f084f0));
+  --rainbow-folder-10: var(--custom-encrypt-rainbow-folder-dark-10, var(--custom-encrypt-rainbow-folder-10, #cadb58));
 }
 
 /* Obsidian 1.x: top-level folders are usually direct children here. */
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 1),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 1),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 1) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 1),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 1),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 1) {
   --rainbow-folder-color: var(--rainbow-folder-1);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 2),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 2),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 2) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 2),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 2),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 2) {
   --rainbow-folder-color: var(--rainbow-folder-2);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 3),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 3),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 3) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 3),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 3),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 3) {
   --rainbow-folder-color: var(--rainbow-folder-3);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 4),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 4),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 4) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 4),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 4),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 4) {
   --rainbow-folder-color: var(--rainbow-folder-4);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 5),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 5),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 5) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 5),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 5),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 5) {
   --rainbow-folder-color: var(--rainbow-folder-5);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n + 6),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n + 6),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n + 6) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 6),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 6),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 6) {
   --rainbow-folder-color: var(--rainbow-folder-6);
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(7n),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(7n),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(7n) {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 7),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 7),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 7) {
   --rainbow-folder-color: var(--rainbow-folder-7);
 }
 
-/* Folder/file names inside each top-level folder inherit that folder color. */
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 8),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 8),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 8) {
+  --rainbow-folder-color: var(--rainbow-folder-8);
+}
+
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 9),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 9),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 9) {
+  --rainbow-folder-color: var(--rainbow-folder-9);
+}
+
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n),
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n) {
+  --rainbow-folder-color: var(--rainbow-folder-10);
+}
+
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+  --rainbow-folder-accent-color: var(--rainbow-folder-color);
+  --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 54%, var(--text-normal));
+  --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 62%, var(--text-normal));
+  --rainbow-folder-row-background: color-mix(in srgb, var(--rainbow-folder-color) 12%, transparent);
+  --rainbow-folder-row-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 16%, transparent);
+  --rainbow-folder-badge-border: color-mix(in srgb, var(--rainbow-folder-color) 32%, transparent);
+  --rainbow-folder-badge-background: color-mix(in srgb, var(--rainbow-folder-color) 16%, transparent);
+  --rainbow-folder-badge-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 22%, transparent);
+}
+
+body.theme-light.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
+body.theme-light.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
+body.theme-light.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+  --rainbow-folder-accent-color: color-mix(in srgb, var(--rainbow-folder-color) 86%, var(--text-normal));
+  --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 58%, var(--text-normal));
+  --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 66%, var(--text-normal));
+  --rainbow-folder-row-background: color-mix(in srgb, var(--rainbow-folder-color) 12%, transparent);
+  --rainbow-folder-row-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 17%, transparent);
+  --rainbow-folder-badge-border: color-mix(in srgb, var(--rainbow-folder-color) 44%, transparent);
+  --rainbow-folder-badge-background: color-mix(in srgb, var(--rainbow-folder-color) 16%, transparent);
+  --rainbow-folder-badge-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 22%, transparent);
+}
+
+body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
+body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
+body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+  --rainbow-folder-accent-color: color-mix(in srgb, var(--rainbow-folder-color) 78%, var(--text-normal));
+  --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 68%, var(--text-normal));
+  --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 74%, var(--text-normal));
+  --rainbow-folder-row-background: color-mix(in srgb, var(--rainbow-folder-color) 20%, transparent);
+  --rainbow-folder-row-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 26%, transparent);
+  --rainbow-folder-badge-border: color-mix(in srgb, var(--rainbow-folder-color) 54%, transparent);
+  --rainbow-folder-badge-background: color-mix(in srgb, var(--rainbow-folder-color) 30%, transparent);
+  --rainbow-folder-badge-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 38%, transparent);
+}
+
+/* Folder/file rows use a theme-adapted version of the folder color for text. */
 body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self,
 body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-folder-title,
 body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title {
-  color: var(--rainbow-folder-color) !important;
-  --nav-item-color: var(--rainbow-folder-color) !important;
-  --nav-item-color-hover: var(--rainbow-folder-color) !important;
-  --nav-item-color-active: var(--rainbow-folder-color) !important;
-  --nav-collapse-icon-color: var(--rainbow-folder-color) !important;
+  color: var(--rainbow-folder-text-color) !important;
+  --nav-item-color: var(--rainbow-folder-text-color) !important;
+  --nav-item-color-hover: var(--rainbow-folder-text-color-hover) !important;
+  --nav-item-color-active: var(--rainbow-folder-text-color-hover) !important;
+  --nav-collapse-icon-color: var(--rainbow-folder-accent-color) !important;
 }
 
 /* Every child row uses the same background as its top-level folder. */
@@ -108,20 +181,30 @@ body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-fold
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title {
-  background-color: color-mix(in srgb, var(--rainbow-folder-color) 14%, transparent) !important;
+  background-color: var(--rainbow-folder-row-background) !important;
   border-radius: 10px;
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-inner,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title-content,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-folder-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self.is-active,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title.is-active,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self.is-active,
+body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title.is-active {
+  background-color: var(--rainbow-folder-row-background-hover) !important;
+  color: var(--rainbow-folder-text-color-hover) !important;
+}
+
 body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .collapse-icon,
 body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .collapse-icon svg,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-inner,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title-content,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .collapse-icon,
 body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .collapse-icon svg {
-  color: var(--rainbow-folder-color) !important;
-  stroke: var(--rainbow-folder-color) !important;
+  color: var(--rainbow-folder-accent-color) !important;
+  stroke: var(--rainbow-folder-accent-color) !important;
 }
 
 /* Slightly increase indentation at every nested child level. */
@@ -235,6 +318,13 @@ body.custom-encrypt-file-explorer-icons .nav-files-container .nav-folder:not(.is
 body.custom-encrypt-file-explorer-icons .nav-files-container .nav-folder:not(.is-collapsed) > .nav-folder-title .nav-folder-title-content::before {
   -webkit-mask-image: var(--icon-folder-open);
   mask-image: var(--icon-folder-open);
+}
+
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container > div > .nav-folder .nav-folder-title > .tree-item-inner::before,
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container > div > .nav-folder .nav-folder-title-content::before,
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title > .tree-item-inner::before,
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title-content::before {
+  background-color: var(--rainbow-folder-accent-color);
 }
 
 body.custom-encrypt-file-explorer-icons .nav-files-container .nav-file-title > .tree-item-inner::before,
@@ -669,13 +759,13 @@ body.custom-encrypt-file-explorer-icons .nav-file-title[data-path$="pom.xml" i] 
   --file-icon-image: var(--icon-maven);
 }
 
-/* File explorer: show Markdown extension as a right-side badge */
-body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i] {
+/* File explorer: show file extensions as right-side badges. */
+body.custom-encrypt-markdown-extension-badge .nav-file-title {
   display: flex;
   align-items: center;
 }
 
-body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i] .nav-file-title-content {
+body.custom-encrypt-markdown-extension-badge .nav-file-title .nav-file-title-content {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -683,19 +773,35 @@ body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i]
 
 body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i]::after {
   content: "MD";
+}
+
+body.custom-encrypt-markdown-extension-badge .nav-file-title .nav-file-tag,
+body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i]::after {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
   margin-left: auto;
   margin-right: 4.5px;
-  color: var(--text-faint);
-  opacity: 0.75;
-  font-size: 0.72em;
+  padding: 0 5px;
+  min-width: 2.1em;
+  box-sizing: border-box;
+  border: 1px solid var(--rainbow-folder-badge-border, color-mix(in srgb, var(--text-normal) 32%, transparent)) !important;
+  border-radius: 999px;
+  background-color: var(--rainbow-folder-badge-background, color-mix(in srgb, var(--text-normal) 16%, transparent)) !important;
+  color: var(--rainbow-folder-text-color, var(--text-normal)) !important;
+  opacity: 1 !important;
+  font-size: 0.68em;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  line-height: 1.45;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
+body.custom-encrypt-markdown-extension-badge .nav-file-title:hover .nav-file-tag,
+body.custom-encrypt-markdown-extension-badge .nav-file-title.is-active .nav-file-tag,
 body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i]:hover::after,
 body.custom-encrypt-markdown-extension-badge .nav-file-title[data-path$=".md" i].is-active::after {
-  color: var(--text-muted);
-  opacity: 1;
+  background-color: var(--rainbow-folder-badge-background-hover, color-mix(in srgb, var(--text-normal) 22%, transparent)) !important;
+  color: var(--rainbow-folder-text-color-hover, var(--text-normal)) !important;
 }
