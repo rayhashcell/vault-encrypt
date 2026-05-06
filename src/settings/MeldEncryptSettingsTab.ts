@@ -4,6 +4,11 @@ import { SessionPasswordService } from "../services/SessionPasswordService.ts";
 import MeldEncrypt from "../main.ts";
 import { IMeldEncryptPluginSettings } from "./MeldEncryptPluginSettings.ts";
 import { DevConsole } from "../services/DevConsole.ts";
+import {
+	createTranslator,
+	normalizeSettingsLanguage,
+	Translator,
+} from "../i18n.ts";
 
 export default class MeldEncryptSettingsTab extends PluginSettingTab {
 	plugin: MeldEncrypt;
@@ -25,12 +30,30 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 	display(): void {
 		const { containerEl } = this;
+		const t = createTranslator(this.settings.settingsLanguage);
 
 		containerEl.empty();
+
+		new Setting(containerEl)
+			.setName(t('settings.language.name'))
+			.setDesc(t('settings.language.desc'))
+			.addDropdown(dropdown => {
+				dropdown
+					.addOption('en', t('settings.language.option.en'))
+					.addOption('zh-CN', t('settings.language.option.zhCn'))
+					.setValue(this.settings.settingsLanguage)
+					.onChange(async value => {
+						this.settings.settingsLanguage = normalizeSettingsLanguage(value);
+						await this.plugin.saveSettings();
+						this.display();
+					})
+				;
+			})
+		;
 		
 		new Setting(containerEl)
-			.setName('Confirm password when encrypting')
-			.setDesc('Ask for the password twice when encrypting, so typos are caught before encrypted content is written.')
+			.setName(t('settings.confirmPassword.name'))
+			.setDesc(t('settings.confirmPassword.desc'))
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.settings.confirmPassword)
@@ -57,18 +80,25 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 			const rememberPasswordTimeout = this.settings.rememberPasswordTimeout;
 
-			let timeoutString = `for ${rememberPasswordTimeout} minute${rememberPasswordTimeout == 1 ? '' : 's'}`;
+			let timeoutString = t('settings.rememberPassword.timeout.forMinutes', {
+				minutes: rememberPasswordTimeout,
+			});
+			if (rememberPasswordTimeout == 1) {
+				timeoutString = t('settings.rememberPassword.timeout.forOneMinute');
+			}
 			if( rememberPasswordTimeout == 0 ){
-				timeoutString = 'until Obsidian is closed';
+				timeoutString = t('settings.rememberPassword.timeout.untilClosed');
 			}
 
-			pwTimeoutSetting.setName( `Remember password (${timeoutString})` )
+			pwTimeoutSetting.setName(t('settings.rememberPassword.timeout.name', {
+				timeout: timeoutString,
+			}));
 		
 		}
 
 		new Setting(containerEl)
-			.setName('Remember passwords during this session')
-			.setDesc('Keep successfully used passwords in memory for this Obsidian session. Cached passwords are cleared when this is disabled, when Obsidian closes, or when the timeout expires. Open whole-note encrypted tabs lock when their remembered password expires.')
+			.setName(t('settings.rememberPassword.name'))
+			.setDesc(t('settings.rememberPassword.desc'))
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.settings.rememberPassword)
@@ -85,12 +115,12 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 		;
 
 		const rememberPasswordLevelSetting = new Setting(containerEl)
-			.setName('Share remembered passwords by')
-				.setDesc( this.buildRememberPasswordDescription() )
+			.setName(t('settings.rememberPassword.shareBy.name'))
+				.setDesc( this.buildRememberPasswordDescription(t) )
 				.addDropdown( cb =>{
 					cb
-						.addOption( SessionPasswordService.LevelVault, 'Vault')
-						.addOption( SessionPasswordService.LevelFilename, 'File')
+						.addOption( SessionPasswordService.LevelVault, t('settings.rememberPassword.shareBy.vault'))
+						.addOption( SessionPasswordService.LevelFilename, t('settings.rememberPassword.shareBy.file'))
 						.setValue( this.settings.rememberPasswordLevel )
 						.onChange( async value => {
 							DevConsole.debug( 'rememberPasswordLevelSetting.onChange', { value } );
@@ -107,8 +137,8 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 		;
 
 		const confirmRememberedPasswordBeforeOpenSetting = new Setting(containerEl)
-			.setName('Confirm remembered password before opening encrypted notes')
-			.setDesc('When a whole-note password is already remembered, show the password dialog with it prefilled instead of opening the note automatically.')
+			.setName(t('settings.confirmRememberedPasswordBeforeOpen.name'))
+			.setDesc(t('settings.confirmRememberedPasswordBeforeOpen.desc'))
 			.addToggle( toggle => {
 				toggle
 					.setValue( this.settings.confirmRememberedPasswordBeforeOpen )
@@ -123,7 +153,7 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 		
 		const pwTimeoutSetting = new Setting(containerEl)
-			.setDesc('0 keeps cached passwords until Obsidian closes. 1-120 clears remembered passwords after that many minutes; the timer refreshes only after a password is successfully used or saved.')
+			.setDesc(t('settings.rememberPasswordTimeout.desc'))
 			.addSlider( slider => {
 				slider
 					.setLimits(0, 120, 1)
@@ -143,24 +173,24 @@ export default class MeldEncryptSettingsTab extends PluginSettingTab {
 
 		// build feature settings
 		this.features.forEach(f => {
-			f.buildSettingsUi( containerEl, async () => await this.plugin.saveSettings() );
+			f.buildSettingsUi( containerEl, async () => await this.plugin.saveSettings(), t );
 		});
 		
 	}
 
-	private buildRememberPasswordDescription( ) : DocumentFragment {
+	private buildRememberPasswordDescription(t: Translator) : DocumentFragment {
 		const f = new DocumentFragment();
 
 		const tbody = f.createEl( 'table' ).createTBody();
 
 		
 		let tr = tbody.createEl( 'tr' );
-		tr.createEl( 'th', { text: 'Vault:', attr: { 'align': 'right'} });
-		tr.createEl( 'td', { text: 'Use one shared cached password for all encrypted notes and inline encrypted text in this vault.' });
+		tr.createEl( 'th', { text: t('settings.rememberPassword.shareBy.vaultLabel'), attr: { 'align': 'right'} });
+		tr.createEl( 'td', { text: t('settings.rememberPassword.shareBy.vaultDesc') });
 		
 		tr = tbody.createEl( 'tr' );
-		tr.createEl( 'th', { text: 'File:', attr: { 'align': 'right'} });
-		tr.createEl( 'td', { text: 'Cache passwords separately by file path, without the file extension.' });
+		tr.createEl( 'th', { text: t('settings.rememberPassword.shareBy.fileLabel'), attr: { 'align': 'right'} });
+		tr.createEl( 'td', { text: t('settings.rememberPassword.shareBy.fileDesc') });
 
 		return f;
 	}

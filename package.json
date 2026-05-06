@@ -1,6 +1,6 @@
 {
 	"name": "custom-encrypt",
-	"version": "2.4.8",
+	"version": "2.4.9",
 	"description": "Hide secrets in your vault",
 	"main": "main.js",
 	"scripts": {

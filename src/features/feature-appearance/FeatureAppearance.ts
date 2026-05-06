@@ -3,6 +3,7 @@ import MeldEncrypt from "../../main.ts";
 import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
 import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
 import { IFeatureAppearanceSettings } from "./IFeatureAppearanceSettings.ts";
+import { Translator } from "../../i18n.ts";
 
 const READABLE_LINE_HEIGHT_CLASS = 'custom-encrypt-readable-line-height';
 const RAINBOW_FILE_EXPLORER_CLASS = 'custom-encrypt-rainbow-file-explorer';
@@ -81,16 +82,17 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 
 	buildSettingsUi(
 		containerEl: HTMLElement,
-		saveSettingCallback: () => Promise<void>
+		saveSettingCallback: () => Promise<void>,
+		t: Translator
 	): void {
 		new Setting(containerEl)
 			.setHeading()
-			.setName('Appearance helpers')
+			.setName(t('appearance.heading'))
 		;
 
 		new Setting(containerEl)
-			.setName('Use readable Markdown line height')
-			.setDesc('Sets Obsidian normal line height to 1.8 while this option is enabled.')
+			.setName(t('appearance.readableLineHeight.name'))
+			.setDesc(t('appearance.readableLineHeight.desc'))
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.featureSettings.readableLineHeight)
@@ -104,8 +106,8 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		;
 
 		new Setting(containerEl)
-			.setName('Use rainbow file explorer folders')
-			.setDesc('Colors each top-level folder and its descendants in the file explorer.')
+			.setName(t('appearance.rainbowFileExplorer.name'))
+			.setDesc(t('appearance.rainbowFileExplorer.desc'))
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.featureSettings.rainbowFileExplorer)
@@ -121,11 +123,11 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		const lightColorPickers: ColorComponent[] = [];
 		const darkColorPickers: ColorComponent[] = [];
 		new Setting(containerEl)
-			.setName('Rainbow folder colors')
-			.setDesc('Choose separate ten-color cycles for light and dark themes.')
+			.setName(t('appearance.rainbowFolderColors.name'))
+			.setDesc(t('appearance.rainbowFolderColors.desc'))
 			.addButton(button => {
 				button
-					.setButtonText('Reset all')
+					.setButtonText(t('appearance.rainbowFolderColors.resetAll'))
 					.onClick(async () => {
 						this.setRainbowFolderColors('light', [...DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT]);
 						this.setRainbowFolderColors('dark', [...DEFAULT_RAINBOW_FOLDER_COLORS_DARK]);
@@ -144,25 +146,27 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 
 		this.buildRainbowFolderColorSettings(
 			containerEl,
-			'Light theme folder colors',
-			'Light folder color',
+			t('appearance.lightThemeFolderColors'),
+			(index) => t('appearance.lightFolderColorName', { number: index + 1 }),
 			'light',
 			lightColorPickers,
-			saveSettingCallback
+			saveSettingCallback,
+			t
 		);
 
 		this.buildRainbowFolderColorSettings(
 			containerEl,
-			'Dark theme folder colors',
-			'Dark folder color',
+			t('appearance.darkThemeFolderColors'),
+			(index) => t('appearance.darkFolderColorName', { number: index + 1 }),
 			'dark',
 			darkColorPickers,
-			saveSettingCallback
+			saveSettingCallback,
+			t
 		);
 
 		new Setting(containerEl)
-			.setName('Show file explorer type icons')
-			.setDesc('Adds file-type icons in the file explorer, including a key icon for .cenc files.')
+			.setName(t('appearance.fileExplorerIcons.name'))
+			.setDesc(t('appearance.fileExplorerIcons.desc'))
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.featureSettings.fileExplorerIcons)
@@ -176,8 +180,8 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		;
 
 		new Setting(containerEl)
-			.setName('Show file extension badges')
-			.setDesc('Shows file extension badges at the right edge of files in the file explorer.')
+			.setName(t('appearance.markdownExtensionBadge.name'))
+			.setDesc(t('appearance.markdownExtensionBadge.desc'))
 			.addToggle(toggle => {
 				toggle
 					.setValue(this.featureSettings.markdownExtensionBadge)
@@ -235,17 +239,21 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 	private buildRainbowFolderColorSettings(
 		containerEl: HTMLElement,
 		sectionName: string,
-		colorNamePrefix: string,
+		getColorName: (index: number) => string,
 		theme: RainbowFolderTheme,
 		colorPickers: ColorComponent[],
-		saveSettingCallback: () => Promise<void>
+		saveSettingCallback: () => Promise<void>,
+		t: Translator
 	): void {
 		new Setting(containerEl)
 			.setName(sectionName)
-			.setDesc(`Used when Obsidian is in ${theme} theme.`)
+			.setDesc(theme === 'light'
+				? t('appearance.usedWhenLightTheme')
+				: t('appearance.usedWhenDarkTheme')
+			)
 			.addButton(button => {
 				button
-					.setButtonText('Reset')
+					.setButtonText(t('appearance.reset'))
 					.onClick(async () => {
 						this.setRainbowFolderColors(theme, [...this.getDefaultRainbowFolderColors(theme)]);
 						this.applyAppearanceSettings();
@@ -260,7 +268,7 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 
 		this.getRainbowFolderColors(theme).forEach((color, index) => {
 			new Setting(containerEl)
-				.setName(`${colorNamePrefix} ${index + 1}`)
+				.setName(getColorName(index))
 				.addColorPicker(colorPicker => {
 					colorPickers[index] = colorPicker;
 					colorPicker

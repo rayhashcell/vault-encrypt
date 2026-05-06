@@ -5,6 +5,8 @@ interface IBuildPasswordSettingParams {
 	desc?: string;
 	autoFocus?: boolean;
 	placeholder?: string;
+	showPasswordTooltip?: string;
+	hidePasswordTooltip?: string;
 	initialValue?:string;
 	tabIndex?:number|undefined;
 	onChangeCallback?: (value:string) => any;
@@ -27,6 +29,8 @@ export class UiHelper{
 			desc = '',
 			autoFocus = false,
 			placeholder = '',
+			showPasswordTooltip = 'Show password',
+			hidePasswordTooltip = 'Hide password',
 			initialValue = '',
 			tabIndex,
 			onChangeCallback,
@@ -41,7 +45,7 @@ export class UiHelper{
 				cb.buttonEl.setAttribute('aria-pressed', 'false');
 				cb
 					.setIcon( 'eye-off' )
-					.setTooltip( 'Show password' )
+					.setTooltip( showPasswordTooltip )
 					.onClick( evt =>{
 						// toggle view password
 						const inputCtrl = sControl.components.find( (bc, idx, obj)=>bc instanceof TextComponent );
@@ -50,7 +54,7 @@ export class UiHelper{
 							inputCtrl.inputEl.type = willShowPassword ? 'text' : 'password';
 							cb
 								.setIcon( willShowPassword ? 'eye' : 'eye-off' )
-								.setTooltip( willShowPassword ? 'Hide password' : 'Show password' )
+								.setTooltip( willShowPassword ? hidePasswordTooltip : showPasswordTooltip )
 							;
 							cb.buttonEl.toggleClass( 'is-active', willShowPassword );
 							cb.buttonEl.setAttribute( 'aria-pressed', willShowPassword.toString() );

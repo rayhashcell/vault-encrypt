@@ -12,6 +12,10 @@ import FeatureAppearance, {
 	DEFAULT_RAINBOW_FOLDER_COLORS_DARK,
 	DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT,
 } from './features/feature-appearance/FeatureAppearance.ts';
+import {
+	DEFAULT_SETTINGS_LANGUAGE,
+	normalizeSettingsLanguage,
+} from './i18n.ts';
 
 export default class MeldEncrypt extends Plugin {
 
@@ -108,6 +112,7 @@ export default class MeldEncrypt extends Plugin {
 	async loadSettings() {
 
 		const DEFAULT_SETTINGS: IMeldEncryptPluginSettings = {
+			settingsLanguage: DEFAULT_SETTINGS_LANGUAGE,
 			confirmPassword: true,
 			rememberPassword: true,
 			rememberPasswordTimeout: 30,
@@ -137,6 +142,7 @@ export default class MeldEncrypt extends Plugin {
 		const loadedAppearanceSettings = loadedSettings?.featureAppearance;
 		const hasLegacyRainbowFolderColors = loadedAppearanceSettings?.rainbowFolderColors != null;
 		this.settings = {
+			settingsLanguage: normalizeSettingsLanguage(loadedSettings?.settingsLanguage),
 			confirmPassword: loadedSettings?.confirmPassword ?? DEFAULT_SETTINGS.confirmPassword,
 			rememberPassword: loadedSettings?.rememberPassword ?? DEFAULT_SETTINGS.rememberPassword,
 			rememberPasswordTimeout: loadedSettings?.rememberPasswordTimeout ?? DEFAULT_SETTINGS.rememberPasswordTimeout,

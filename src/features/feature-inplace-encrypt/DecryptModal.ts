@@ -1,20 +1,28 @@
 import { App, Modal, Notice, Setting, TextAreaComponent } from 'obsidian';
+import {
+	createTranslator,
+	DEFAULT_SETTINGS_LANGUAGE,
+	Translator,
+} from '../../i18n.ts';
 
 export default class DecryptModal extends Modal {
 	text: string;
 	decryptInPlace = false;
 	save = false;
+	private t: Translator;
 	
 	canDecryptInPlace = true;
 
 	constructor(
 		app: App,
 		title: string,
-		text = ''
+		text = '',
+		t: Translator = createTranslator(DEFAULT_SETTINGS_LANGUAGE)
 	) {
 		super(app);
 		this.titleEl.setText(title);
 		this.text = text;
+		this.t = t;
 	}
 
 	onOpen() {
@@ -39,7 +47,7 @@ export default class DecryptModal extends Modal {
 		sActions
 			.addButton(cb => {
 				cb
-					.setButtonText('Save')
+					.setButtonText(this.t('modal.button.save'))
 					.onClick( evt =>{
 						this.save = true;
 						this.text = cTextArea.getValue();
@@ -50,10 +58,10 @@ export default class DecryptModal extends Modal {
 		sActions
 			.addButton( cb =>{
 				cb
-					.setButtonText('Copy')
+					.setButtonText(this.t('modal.button.copy'))
 					.onClick( evt =>{
 						navigator.clipboard.writeText( cTextArea.getValue() );
-						new Notice('Copied!');
+						new Notice(this.t('modal.notice.copied'));
 					})
 				;
 			})
@@ -61,7 +69,7 @@ export default class DecryptModal extends Modal {
 		if (this.canDecryptInPlace){
 			sActions.addButton( cb =>{
 				cb.setWarning()
-				.setButtonText('Decrypt in-place')
+				.setButtonText(this.t('modal.button.decryptInPlace'))
 				.onClick( evt =>{
 					this.decryptInPlace = true;
 					this.text = cTextArea.getValue();

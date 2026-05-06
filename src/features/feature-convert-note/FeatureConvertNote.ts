@@ -8,13 +8,16 @@ import { FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.
 import { Utils } from "../../services/Utils.ts";
 import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../../services/Constants.ts";
 import { EncryptedMarkdownView } from "../feature-whole-note-encrypt/EncryptedMarkdownView.ts";
+import { createTranslator, Translator } from "../../i18n.ts";
 
 export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 	
 	plugin: MeldEncrypt;
+	private settings: IMeldEncryptPluginSettings;
 	
 	async onload(plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings) {
 		this.plugin = plugin;
+		this.settings = settings;
 
 		this.plugin.addCommand({
 			id: 'custom-encrypt-convert-to-or-from-encrypted-note',
@@ -59,7 +62,11 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 	
 	onunload(): void { }
 
-	buildSettingsUi(containerEl: HTMLElement, saveSettingCallback: () => Promise<void>): void { }
+	buildSettingsUi(containerEl: HTMLElement, saveSettingCallback: () => Promise<void>, t: Translator): void { }
+
+	private t(): Translator {
+		return createTranslator(this.settings.settingsLanguage);
+	}
 
 	private checkCanEncryptFile( file:TFile | null ) : boolean {
 		if ( file == null ){
@@ -130,7 +137,15 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 
 			if ( password.password == '' ){
 				// ask for password
-				const pm = new PluginPasswordModal( this.plugin.app, 'Encrypt Note', true, true, password );
+				const t = this.t();
+				const pm = new PluginPasswordModal(
+					this.plugin.app,
+					t('modal.title.encryptNote'),
+					true,
+					true,
+					password,
+					t
+				);
 				password = await pm.openAsync();
 			}
 
@@ -172,8 +187,15 @@ export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
 		const encryptedFileContent = await this.plugin.app.vault.read( file );
 		const encryptedData = JsonFileEncoding.decode( encryptedFileContent );
 
-
-		const pwm = new PluginPasswordModal(this.plugin.app, 'Decrypt Note', false, false, { password: '', hint: encryptedData.hint } );
+		const t = this.t();
+		const pwm = new PluginPasswordModal(
+			this.plugin.app,
+			t('modal.title.decryptNote'),
+			false,
+			false,
+			{ password: '', hint: encryptedData.hint },
+			t
+		);
 		try{
 			passwordAndHint = await pwm.openAsync();
 			

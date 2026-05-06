@@ -11,6 +11,7 @@ import { CryptoHelperFactory } from "../../services/CryptoHelperFactory.ts";
 import { Decryptable } from "./Decryptable.ts";
 import { FeatureInplaceTextAnalysis } from "./featureInplaceTextAnalysis.ts";
 import { ENCRYPTED_ICON, _HINT, _PREFIXES, _PREFIX_ENCODE_DEFAULT, _PREFIX_ENCODE_DEFAULT_VISIBLE, _SUFFIXES, _SUFFIX_NO_COMMENT, _SUFFIX_WITH_COMMENT, _VISIBLE_PREFIXES } from "./FeatureInplaceConstants.ts";
+import { createTranslator, Translator } from "../../i18n.ts";
 
 enum EncryptOrDecryptMode{
 	Encrypt = 'encrypt',
@@ -73,6 +74,10 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 
 	onunload(){
 
+	}
+
+	private t(): Translator {
+		return createTranslator(this.pluginSettings.settingsLanguage);
 	}
 
 	private static escapeRegExp( text: string ): string {
@@ -298,7 +303,7 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		onDecryptSuccess?.();
 		
 		return new Promise<boolean>( (resolve) => {
-			const decryptModal = new DecryptModal(this.plugin.app, '🔓', decryptedText );
+			const decryptModal = new DecryptModal(this.plugin.app, '🔓', decryptedText, this.t() );
 			decryptModal.canDecryptInPlace = false;
 			decryptModal.onClose = () =>{
 				resolve(true);
@@ -318,7 +323,8 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 				/*confirmPassword*/ false,
 				/*defaultShowInReadingView*/ this.featureSettings.showMarkerWhenReadingDefault,
 				'',
-				hint
+				hint,
+				this.t()
 			);
 
 			pwModal.onClose = () =>{
@@ -346,16 +352,17 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 
 	public buildSettingsUi(
 		containerEl: HTMLElement,
-		saveSettingCallback : () => Promise<void>
+		saveSettingCallback : () => Promise<void>,
+		t: Translator
 	): void {
 		new Setting(containerEl)
 			.setHeading()
-			.setName('In-place encryption')
+			.setName(t('inplace.heading'))
 		;
 
 		new Setting(containerEl)
-			.setName('Inline marker search limit')
-			.setDesc('Maximum characters to scan before and after the cursor or selection when finding inline encryption markers. Increase this for very long encrypted blocks.')
+			.setName(t('inplace.markerSearchLimit.name'))
+			.setDesc(t('inplace.markerSearchLimit.desc'))
 			.addText( text => {
 				text
 					.setValue(this.featureSettings.markerSearchLimit?.toString() ?? '10000' )
@@ -373,8 +380,8 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			})
 
 		new Setting(containerEl)
-			.setName('Show inline encryption markers in Reading view by default')
-			.setDesc('Default for new inline encryption only. On shows lock markers in Reading view; off hides them with Markdown comments.')
+			.setName(t('inplace.showMarkerWhenReadingDefault.name'))
+			.setDesc(t('inplace.showMarkerWhenReadingDefault.desc'))
 			.addToggle( toggle =>{
 				toggle
 					.setValue(this.featureSettings.showMarkerWhenReadingDefault)
@@ -670,7 +677,8 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			confirmPassword,
 			/*defaultShowInReadingView*/ this.featureSettings.showMarkerWhenReadingDefault,
 			defaultPassword,
-			defaultHint
+			defaultHint,
+			this.t()
 		);
 
 		pwModal.onClose = async () => {
@@ -794,7 +802,7 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 			return false;
 		} else {
 
-			const decryptModal = new DecryptModal(this.plugin.app, '🔓', decryptedText );
+			const decryptModal = new DecryptModal(this.plugin.app, '🔓', decryptedText, this.t() );
 			decryptModal.onClose = async () => {
 				editor.focus();
 				if (decryptModal.decryptInPlace) {

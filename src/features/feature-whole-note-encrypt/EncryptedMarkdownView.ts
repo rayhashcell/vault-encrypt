@@ -5,6 +5,7 @@ import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { ENCRYPTED_FILE_EXTENSIONS } from "../../services/Constants.ts";
 import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
 import { DevConsole } from "../../services/DevConsole.ts";
+import { createTranslator, Translator } from "../../i18n.ts";
 
 export class EncryptedMarkdownView extends MarkdownView {
 
@@ -35,6 +36,10 @@ export class EncryptedMarkdownView extends MarkdownView {
 
 	override canAcceptExtension(extension: string): boolean {
 		return ENCRYPTED_FILE_EXTENSIONS.includes( extension );
+	}
+
+	private t(): Translator {
+		return createTranslator(this.pluginSettings.settingsLanguage);
 	}
 
 	protected override async onOpen(): Promise<void> {
@@ -103,13 +108,15 @@ export class EncryptedMarkdownView extends MarkdownView {
 
 			while( decryptedText == null ){
 				const promptUsesRememberedPassword = nextPasswordPromptUsesRememberedPassword;
+				const t = this.t();
 				// prompt for password
 				const passwordModal = new PluginPasswordModal(
 					this.app,
-					`Decrypting "${file.basename}"`,
+					t('modal.title.decryptingFile', { file: file.basename }),
 					false,
 					false,
-					nextPasswordPromptDefault
+					nextPasswordPromptDefault,
+					t
 				);
 				let rememberedPasswordExpiryWatcher: number | null = null;
 				try {
@@ -391,12 +398,14 @@ export class EncryptedMarkdownView extends MarkdownView {
 		}
 
 		// fetch password
+		const t = this.t();
 		const pwm = new PluginPasswordModal(
 			this.app,
-			`Change password for "${this.file.basename}"`,
+			t('modal.title.changePasswordForFile', { file: this.file.basename }),
 			true,
 			true,
-			await SessionPasswordService.peekByFile( this.file )
+			await SessionPasswordService.peekByFile( this.file ),
+			t
 		);
 			
 		try{

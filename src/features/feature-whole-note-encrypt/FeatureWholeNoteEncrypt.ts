@@ -7,6 +7,7 @@ import { ExpiredSessionPasswordCacheItem, PasswordAndHint, SessionPasswordServic
 import { FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.ts";
 import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../../services/Constants.ts";
 import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
+import { createTranslator, Translator } from "../../i18n.ts";
 
 export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeature {
 
@@ -213,6 +214,10 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		return lockedCount;
 	}
 
+	private t(): Translator {
+		return createTranslator(this.settings.settingsLanguage);
+	}
+
 	private getDefaultFileFolder() : TFolder {
 		const activeFile = this.plugin.app.workspace.getActiveFile();
 
@@ -227,13 +232,15 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		
 		const newFilename = moment().format( `[Untitled] YYYYMMDD hhmmss[.${ENCRYPTED_FILE_EXTENSION_DEFAULT}]`);
 		const newFilepath = normalizePath( parentFolder.path + "/" + newFilename );
+		const t = this.t();
 		
 		const pwm = new PluginPasswordModal(
 			this.plugin.app,
-			'Please provide a password for encryption',
+			t('modal.title.providePasswordForEncryption'),
 			true,
 			true,
-			await SessionPasswordService.peekByPathAsync( newFilepath )
+			await SessionPasswordService.peekByPathAsync( newFilepath ),
+			t
 		);
 
 		let pwh : PasswordAndHint;
@@ -261,7 +268,7 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		this.plugin.app.workspace.detachLeavesOfType(EncryptedMarkdownView.VIEW_TYPE);
 	}
 
-	buildSettingsUi(containerEl: HTMLElement, saveSettingCallback: () => Promise<void>): void {
+	buildSettingsUi(containerEl: HTMLElement, saveSettingCallback: () => Promise<void>, t: Translator): void {
 		//throw new Error("Method not implemented.");
 	}
 

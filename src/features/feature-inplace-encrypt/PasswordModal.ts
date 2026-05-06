@@ -1,5 +1,10 @@
 import { App, Modal, Setting, TextComponent } from 'obsidian';
 import { UiHelper } from '../../services/UiHelper.ts';
+import {
+	createTranslator,
+	DEFAULT_SETTINGS_LANGUAGE,
+	Translator,
+} from '../../i18n.ts';
 
 export default class PasswordModal extends Modal {
 	
@@ -8,6 +13,7 @@ export default class PasswordModal extends Modal {
 	private defaultHint: string;
 	private confirmPassword: boolean;
 	private isEncrypting: boolean;
+	private t: Translator;
 	public showInReadingView: boolean;
 
 	// output
@@ -22,7 +28,8 @@ export default class PasswordModal extends Modal {
 		confirmPassword: boolean,
 		defaultShowInReadingView: boolean,
 		defaultPassword: string | null = null,
-		hint:string | null = null
+		hint:string | null = null,
+		t: Translator = createTranslator(DEFAULT_SETTINGS_LANGUAGE)
 	) {
 		super(app);
 		this.defaultPassword = defaultPassword;
@@ -30,6 +37,7 @@ export default class PasswordModal extends Modal {
 		this.showInReadingView = defaultShowInReadingView
 		this.isEncrypting = isEncrypting;
 		this.defaultHint = hint ?? '';
+		this.t = t;
 	}
 
 	onOpen() {
@@ -46,15 +54,21 @@ export default class PasswordModal extends Modal {
 		let showInReadingView = this.showInReadingView;
 
 		new Setting(contentEl).setHeading().setName(
-			this.isEncrypting ? 'Encrypting' : 'Decrypting'
+			this.isEncrypting
+				? this.t('modal.title.encrypting')
+				: this.t('modal.title.decrypting')
 		);
 
 		/* Main password input*/
 
 		UiHelper.buildPasswordSetting({
 			container: contentEl,
-			name: 'Password:',
-			placeholder: ( this.isEncrypting || hint.length == 0 ) ? '' : `Hint: ${hint}`,
+			name: this.t('modal.password.name'),
+			placeholder: ( this.isEncrypting || hint.length == 0 )
+				? ''
+				: this.t('modal.password.hintPlaceholder', { hint }),
+			showPasswordTooltip: this.t('modal.password.showPasswordTooltip'),
+			hidePasswordTooltip: this.t('modal.password.hidePasswordTooltip'),
 			initialValue: password,
 			autoFocus: true,
 			onChangeCallback: (value) => {
@@ -91,7 +105,9 @@ export default class PasswordModal extends Modal {
 		/* Confirm password input row */
 		const sConfirmPassword = UiHelper.buildPasswordSetting({
 			container : contentEl,
-			name: 'Confirm Password:',
+			name: this.t('modal.confirmPassword.name'),
+			showPasswordTooltip: this.t('modal.password.showPasswordTooltip'),
+			hidePasswordTooltip: this.t('modal.password.hidePasswordTooltip'),
 			onChangeCallback: (value) => {
 				confirmPass = value;
 				this.invalidate();
@@ -121,10 +137,10 @@ export default class PasswordModal extends Modal {
 
 		/* Hint input row */
 		const sHint = new Setting(contentEl)
-			.setName('Optional Password Hint')
+			.setName(this.t('modal.optionalPasswordHint.name'))
 			.addText( tc=>{
 				//tcHint = tc;
-				tc.inputEl.placeholder = `Password Hint`;
+				tc.inputEl.placeholder = this.t('modal.optionalPasswordHint.placeholder');
 				tc.setValue(hint);
 				tc.onChange( v=> hint = v );
 				tc.inputEl.on('keypress', '*', (ev, target) => {
@@ -149,7 +165,7 @@ export default class PasswordModal extends Modal {
 
 		/* Show indicator in reading mode */
 		const sShowWhenReading = new Setting(contentEl)
-			.setName('Show encrypted marker in Reading view')
+			.setName(this.t('modal.showEncryptedMarkerInReadingView.name'))
 			.addToggle( cb=>{
 				cb
 					.setValue( showInReadingView )
@@ -167,7 +183,7 @@ export default class PasswordModal extends Modal {
 
 		new Setting(contentEl).addButton( cb=>{
 			cb
-				.setButtonText('Confirm')
+				.setButtonText(this.t('modal.button.confirm'))
 				.onClick( evt =>{
 					if (validate()){
 						this.close();
@@ -185,13 +201,13 @@ export default class PasswordModal extends Modal {
 			if ( this.confirmPassword ){
 				if (password != confirmPass){
 					// passwords don't match
-					sConfirmPassword.setDesc('Passwords don\'t match');
+					sConfirmPassword.setDesc(this.t('modal.validation.passwordsDontMatch'));
 					return false;
 				}
 			}
 
 			if ( this.isEncrypting && hint.includes('`') ){
-				sHint.setDesc('Password hint cannot contain backticks.');
+				sHint.setDesc(this.t('modal.validation.passwordHintCannotContainBackticks'));
 				return false;
 			}
 

@@ -58,6 +58,13 @@ The README `Latest Changes > Unreleased` section also records the current change
 - `navigator.clipboard.writeText` may be less reliable on mobile. Wrap new clipboard use in error handling and show a user-facing failure notice.
 - Avoid expensive synchronous crypto or parsing work on the UI thread, especially on Android.
 
+## Localization Rules
+
+- Plugin settings language is plugin-managed and limited to English (`en`) and Simplified Chinese (`zh-CN`); do not sync it with Obsidian's language.
+- Any setting item change must update both English and Simplified Chinese translations in the central i18n module.
+- Setting-related dialogs, buttons, placeholders, and validation messages are part of the same localization surface and must also keep both translations in sync.
+- Do not add a translation key for only one language, and do not let the Simplified Chinese copy drift from the English meaning.
+
 ## Validation
 
 Use these checks after security-sensitive changes:

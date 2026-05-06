@@ -1,6 +1,11 @@
 import { App, Modal, Setting, TextComponent } from 'obsidian';
 import { UiHelper } from './services/UiHelper.ts';
 import { PasswordAndHint } from './services/SessionPasswordService.ts';
+import {
+	createTranslator,
+	DEFAULT_SETTINGS_LANGUAGE,
+	Translator,
+} from './i18n.ts';
 
 export default class PluginPasswordModal extends Modal {
 	
@@ -10,6 +15,7 @@ export default class PluginPasswordModal extends Modal {
 	//private defaultHint?: string | null = null;
 	private confirmPassword: boolean;
 	private isEncrypting: boolean;
+	private t: Translator;
 
 	// output
 	public resultConfirmed = false;
@@ -21,12 +27,14 @@ export default class PluginPasswordModal extends Modal {
 		isEncrypting:boolean,
 		confirmPassword: boolean,
 		defaultPassword: PasswordAndHint | null,
+		t: Translator = createTranslator(DEFAULT_SETTINGS_LANGUAGE),
 	) {
 		super(app);
 		this.title = title;
 		this.defaultPassword = defaultPassword;
 		this.confirmPassword = confirmPassword;
 		this.isEncrypting = isEncrypting;
+		this.t = t;
 	}
 
 	onOpen() {
@@ -47,8 +55,12 @@ export default class PluginPasswordModal extends Modal {
 		UiHelper.buildPasswordSetting({
 			container: contentEl,
 			tabIndex: 0,
-			name: 'Password:',
-			placeholder: this.isEncrypting ? '' : `Hint: ${hint}`,
+			name: this.t('modal.password.name'),
+			placeholder: this.isEncrypting
+				? ''
+				: this.t('modal.password.hintPlaceholder', { hint }),
+			showPasswordTooltip: this.t('modal.password.showPasswordTooltip'),
+			hidePasswordTooltip: this.t('modal.password.hidePasswordTooltip'),
 			initialValue: password,
 			autoFocus: password == '',
 			onChangeCallback: (value) => {
@@ -85,7 +97,9 @@ export default class PluginPasswordModal extends Modal {
 		/* Confirm password input row */
 		const sConfirmPassword = UiHelper.buildPasswordSetting({
 			container : contentEl,
-			name: 'Confirm Password:',
+			name: this.t('modal.confirmPassword.name'),
+			showPasswordTooltip: this.t('modal.password.showPasswordTooltip'),
+			hidePasswordTooltip: this.t('modal.password.hidePasswordTooltip'),
 			tabIndex: 1,
 			autoFocus: password != '',
 			onChangeCallback: (value) => {
@@ -117,10 +131,10 @@ export default class PluginPasswordModal extends Modal {
 
 		/* Hint input row */
 		const sHint = new Setting(contentEl)
-			.setName('Optional Password Hint')
+			.setName(this.t('modal.optionalPasswordHint.name'))
 			.addText( tc=>{
 				//tcHint = tc;
-				tc.inputEl.placeholder = `Password Hint`;
+				tc.inputEl.placeholder = this.t('modal.optionalPasswordHint.placeholder');
 				tc.inputEl.tabIndex = 2;
 				tc.setValue(hint);
 				tc.onChange( v=> hint = v );
@@ -147,7 +161,7 @@ export default class PluginPasswordModal extends Modal {
 		new Setting(contentEl).addButton( cb=>{
 			cb.buttonEl.tabIndex = 99;
 			cb
-				.setButtonText('Confirm')
+				.setButtonText(this.t('modal.button.confirm'))
 				.onClick( evt =>{
 					if (validate()){
 						this.close();
@@ -164,7 +178,7 @@ export default class PluginPasswordModal extends Modal {
 			if ( this.confirmPassword ){
 				if (password != confirmPass){
 					// passwords don't match
-					sConfirmPassword.setDesc('Passwords don\'t match');
+					sConfirmPassword.setDesc(this.t('modal.validation.passwordsDontMatch'));
 					return false;
 				}
 			}
