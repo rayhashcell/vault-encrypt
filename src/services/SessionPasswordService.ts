@@ -186,7 +186,7 @@ export class SessionPasswordService{
 	}
 
 	private static getPathCacheKey( path : string ) : string {
-		
+
 		if ( SessionPasswordService.level == SessionPasswordService.LevelVault ){
 			return SessionPasswordService.vaultCacheKey;
 		}
