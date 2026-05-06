@@ -14,9 +14,16 @@ To release a new version:
 2. Run `npm run version` to update `manifest.json` & `versions.json`.
   	* `manifest.json`: holds the new version number and the minimum Obsidian version required for your latest release.
 	* `versions.json`: holds the history of version numbers and their minimum Obsidian version, so older versions of Obsidian can download an older version of your plugin that's compatible.
-3. Create new GitHub release using your new version number as the **Tag version**. Use the exact version number, and don't include a prefix `v`. See the following example: [obsidian-sample-plugin](https://github.com/obsidianmd/obsidian-sample-plugin/releases).
-4. Upload the files `custom-encrypt-<ver>.zip`, `manifest.json`, `main.js`, and `styles.css` as binary attachments.
-5. Publish the release.
+3. Commit the release changes.
+4. Create and push a tag using the exact version number with a `v` prefix, such as `v2.4.11`.
+
+The `Publish GitHub Release` workflow builds the plugin and publishes the GitHub release automatically. It uploads the three plugin files from `dist/custom-encrypt-<ver>/custom-encrypt/`:
+
+* `main.js`
+* `manifest.json`
+* `styles.css`
+
+The workflow can also be run manually from GitHub Actions. Leave the version input empty to release `v<package.json version>`, or provide a `v`-prefixed version such as `v2.4.11`.
 
 ## Adding Your Plugin to the Community Plugin List
 

@@ -81,3 +81,24 @@ When updating the installed test plugin, build first and copy the generated file
 to:
 
 - `/Users/bisco/private/obvault/.obsidian/plugins/custom-encrypt/`
+
+## Release Process
+
+For normal GitHub releases:
+
+1. Keep plugin metadata versions as plain semver without a `v` prefix:
+   - `package.json`
+   - `package-lock.json`
+   - `manifest.json`
+   - `versions.json`
+2. Bump the package version with `npm version patch --no-git-tag-version` unless a specific version is requested. This runs `version-bump.mjs`, which syncs `manifest.json` and appends `versions.json`.
+3. Do not update `manifest-beta.json` for a normal stable release unless the user explicitly asks for beta release metadata.
+4. Run `npm run build` and `git diff --check`.
+5. Commit the release changes.
+6. Create and push a Git tag with a `v` prefix, for example `v2.4.11`.
+
+The `Publish GitHub Release` GitHub Actions workflow is triggered by `v*.*.*` tags or by manual dispatch. It builds the plugin and publishes a GitHub Release named after the `v`-prefixed tag. The workflow uploads exactly these plugin files from `dist/custom-encrypt-<version>/custom-encrypt/`:
+
+- `main.js`
+- `manifest.json`
+- `styles.css`
