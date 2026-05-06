@@ -60,70 +60,8 @@ body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-files-container {
   --rainbow-folder-10: var(--custom-encrypt-rainbow-folder-dark-10, var(--custom-encrypt-rainbow-folder-10, #cadb58));
 }
 
-/* Obsidian 1.x: top-level folders are usually direct children here. */
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 1),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 1),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 1) {
-  --rainbow-folder-color: var(--rainbow-folder-1);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 2),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 2),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 2) {
-  --rainbow-folder-color: var(--rainbow-folder-2);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 3),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 3),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 3) {
-  --rainbow-folder-color: var(--rainbow-folder-3);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 4),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 4),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 4) {
-  --rainbow-folder-color: var(--rainbow-folder-4);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 5),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 5),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 5) {
-  --rainbow-folder-color: var(--rainbow-folder-5);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 6),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 6),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 6) {
-  --rainbow-folder-color: var(--rainbow-folder-6);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 7),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 7),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 7) {
-  --rainbow-folder-color: var(--rainbow-folder-7);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 8),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 8),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 8) {
-  --rainbow-folder-color: var(--rainbow-folder-8);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n + 9),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n + 9),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n + 9) {
-  --rainbow-folder-color: var(--rainbow-folder-9);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder:nth-child(10n),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder:nth-child(10n),
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder:nth-child(10n) {
-  --rainbow-folder-color: var(--rainbow-folder-10);
-}
-
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+/* Runtime code assigns --rainbow-folder-color by stable top-level folder path. */
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item {
   --rainbow-folder-accent-color: var(--rainbow-folder-color);
   --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 54%, var(--text-normal));
   --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 62%, var(--text-normal));
@@ -134,9 +72,7 @@ body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-chil
   --rainbow-folder-badge-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 22%, transparent);
 }
 
-body.theme-light.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
-body.theme-light.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
-body.theme-light.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+body.theme-light.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item {
   --rainbow-folder-accent-color: color-mix(in srgb, var(--rainbow-folder-color) 86%, var(--text-normal));
   --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 58%, var(--text-normal));
   --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 66%, var(--text-normal));
@@ -147,9 +83,7 @@ body.theme-light.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tr
   --rainbow-folder-badge-background-hover: color-mix(in srgb, var(--rainbow-folder-color) 22%, transparent);
 }
 
-body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder,
-body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder,
-body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tree-item-children > .nav-folder {
+body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item {
   --rainbow-folder-accent-color: color-mix(in srgb, var(--rainbow-folder-color) 78%, var(--text-normal));
   --rainbow-folder-text-color: color-mix(in srgb, var(--rainbow-folder-color) 68%, var(--text-normal));
   --rainbow-folder-text-color-hover: color-mix(in srgb, var(--rainbow-folder-color) 74%, var(--text-normal));
@@ -161,12 +95,9 @@ body.theme-dark.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .tre
 }
 
 /* Folder/file rows use a theme-adapted version of the folder color for text. */
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-folder-title,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .tree-item-self,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-folder-title,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-file-title {
   color: var(--rainbow-folder-text-color) !important;
   --nav-item-color: var(--rainbow-folder-text-color) !important;
   --nav-item-color-hover: var(--rainbow-folder-text-color-hover) !important;
@@ -174,35 +105,25 @@ body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-chi
   --nav-collapse-icon-color: var(--rainbow-folder-accent-color) !important;
 }
 
-/* Every child row uses the same background as its top-level folder. */
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-folder-title,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title {
+/* Every row under a colored top-level folder uses that folder background. */
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .tree-item-self,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-folder-title,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-file-title {
   background-color: var(--rainbow-folder-row-background) !important;
   border-radius: 10px;
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-folder-title:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .tree-item-self.is-active,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .nav-file-title.is-active,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title:hover,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .tree-item-self.is-active,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-file-title.is-active {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .tree-item-self:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-folder-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-file-title:hover,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .tree-item-self.is-active,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-file-title.is-active {
   background-color: var(--rainbow-folder-row-background-hover) !important;
   color: var(--rainbow-folder-text-color-hover) !important;
 }
 
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .collapse-icon,
-body.custom-encrypt-rainbow-file-explorer .nav-files-container > div > .nav-folder .collapse-icon svg,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .collapse-icon,
-body.custom-encrypt-rainbow-file-explorer .nav-folder.mod-root > .nav-folder-children > .nav-folder .collapse-icon svg {
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .collapse-icon,
+body.custom-encrypt-rainbow-file-explorer .nav-files-container .custom-encrypt-rainbow-file-explorer-item .collapse-icon svg {
   color: var(--rainbow-folder-accent-color) !important;
   stroke: var(--rainbow-folder-accent-color) !important;
 }
@@ -320,10 +241,8 @@ body.custom-encrypt-file-explorer-icons .nav-files-container .nav-folder:not(.is
   mask-image: var(--icon-folder-open);
 }
 
-body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container > div > .nav-folder .nav-folder-title > .tree-item-inner::before,
-body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container > div > .nav-folder .nav-folder-title-content::before,
-body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title > .tree-item-inner::before,
-body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-folder.mod-root > .nav-folder-children > .nav-folder .nav-folder-title-content::before {
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-folder-title > .tree-item-inner::before,
+body.custom-encrypt-rainbow-file-explorer.custom-encrypt-file-explorer-icons .nav-files-container .custom-encrypt-rainbow-file-explorer-item .nav-folder-title-content::before {
   background-color: var(--rainbow-folder-accent-color);
 }
 

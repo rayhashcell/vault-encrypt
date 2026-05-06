@@ -1,4 +1,4 @@
-import { ColorComponent, Setting } from "obsidian";
+import { ColorComponent, Setting, TFolder } from "obsidian";
 import MeldEncrypt from "../../main.ts";
 import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
 import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
@@ -7,6 +7,7 @@ import { Translator } from "../../i18n.ts";
 
 const READABLE_LINE_HEIGHT_CLASS = 'custom-encrypt-readable-line-height';
 const RAINBOW_FILE_EXPLORER_CLASS = 'custom-encrypt-rainbow-file-explorer';
+const RAINBOW_FILE_EXPLORER_ITEM_CLASS = 'custom-encrypt-rainbow-file-explorer-item';
 const FILE_EXPLORER_ICONS_CLASS = 'custom-encrypt-file-explorer-icons';
 const MARKDOWN_EXTENSION_BADGE_CLASS = 'custom-encrypt-markdown-extension-badge';
 const RAINBOW_FOLDER_LEGACY_COLOR_PREFIX = '--custom-encrypt-rainbow-folder-';
@@ -67,8 +68,13 @@ export const DEFAULT_RAINBOW_FOLDER_COLORS = DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT
 
 export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 	private featureSettings: IFeatureAppearanceSettings;
+	private plugin: MeldEncrypt;
+	private rainbowFolderIndexByRootPath = new Map<string, number>();
+	private rainbowFolderMutationObserver: MutationObserver | null = null;
+	private rainbowFolderUpdateFrame: number | null = null;
 
 	async onload(plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings): Promise<void> {
+		this.plugin = plugin;
 		this.featureSettings = settings.featureAppearance;
 		this.featureSettings.rainbowFolderColorsLight = this.getRainbowFolderColors('light');
 		this.featureSettings.rainbowFolderColorsDark = this.getRainbowFolderColors('dark');
@@ -201,6 +207,7 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		this.toggleBodyClass(FILE_EXPLORER_ICONS_CLASS, this.featureSettings.fileExplorerIcons);
 		this.toggleBodyClass(MARKDOWN_EXTENSION_BADGE_CLASS, this.featureSettings.markdownExtensionBadge);
 		this.applyRainbowFolderColors();
+		this.updateRainbowFolderDomColoring();
 	}
 
 	private clearAppearanceSettings(): void {
@@ -212,6 +219,7 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		] ) {
 			document.body.classList.remove(className);
 		}
+		this.stopRainbowFolderDomColoring();
 		this.clearRainbowFolderColors();
 	}
 
@@ -226,6 +234,130 @@ export default class FeatureAppearance implements IMeldEncryptPluginFeature {
 		this.getRainbowFolderColors('dark').forEach((color, index) => {
 			document.body.style.setProperty(`${RAINBOW_FOLDER_DARK_COLOR_PREFIX}${index + 1}`, color);
 		});
+	}
+
+	private updateRainbowFolderDomColoring(): void {
+		if (!this.featureSettings.rainbowFileExplorer) {
+			this.stopRainbowFolderDomColoring();
+			return;
+		}
+
+		this.startRainbowFolderDomColoring();
+		this.scheduleRainbowFolderDomColoring();
+	}
+
+	private startRainbowFolderDomColoring(): void {
+		if (this.rainbowFolderMutationObserver != null) {
+			return;
+		}
+
+		this.rainbowFolderMutationObserver = new MutationObserver(() => {
+			this.scheduleRainbowFolderDomColoring();
+		});
+		this.rainbowFolderMutationObserver.observe(document.body, {
+			attributes: true,
+			attributeFilter: ['data-path'],
+			childList: true,
+			subtree: true,
+		});
+	}
+
+	private stopRainbowFolderDomColoring(): void {
+		this.rainbowFolderMutationObserver?.disconnect();
+		this.rainbowFolderMutationObserver = null;
+		if (this.rainbowFolderUpdateFrame != null) {
+			window.cancelAnimationFrame(this.rainbowFolderUpdateFrame);
+			this.rainbowFolderUpdateFrame = null;
+		}
+		this.clearRainbowFolderDomColors();
+	}
+
+	private scheduleRainbowFolderDomColoring(): void {
+		if (this.rainbowFolderUpdateFrame != null) {
+			return;
+		}
+
+		this.rainbowFolderUpdateFrame = window.requestAnimationFrame(() => {
+			this.rainbowFolderUpdateFrame = null;
+			this.applyRainbowFolderDomColors();
+		});
+	}
+
+	private applyRainbowFolderDomColors(): void {
+		this.rebuildRainbowFolderIndexByRootPath();
+
+		const navItems = document.body.querySelectorAll<HTMLElement>(
+			'.nav-files-container .nav-folder, .nav-files-container .nav-file'
+		);
+
+		navItems.forEach(navItem => {
+			const rootPath = this.getRootFolderPathForNavItem(navItem);
+			if (rootPath == null) {
+				this.clearRainbowFolderDomColor(navItem);
+				return;
+			}
+
+			const colorIndex = this.getRainbowFolderColorIndex(rootPath);
+			navItem.classList.add(RAINBOW_FILE_EXPLORER_ITEM_CLASS);
+			navItem.style.setProperty('--rainbow-folder-color', `var(--rainbow-folder-${colorIndex + 1})`);
+		});
+	}
+
+	private clearRainbowFolderDomColors(): void {
+		document.body.querySelectorAll<HTMLElement>(`.${RAINBOW_FILE_EXPLORER_ITEM_CLASS}`).forEach(navItem => {
+			this.clearRainbowFolderDomColor(navItem);
+		});
+	}
+
+	private clearRainbowFolderDomColor(navItem: HTMLElement): void {
+		navItem.classList.remove(RAINBOW_FILE_EXPLORER_ITEM_CLASS);
+		navItem.style.removeProperty('--rainbow-folder-color');
+	}
+
+	private rebuildRainbowFolderIndexByRootPath(): void {
+		const topLevelFolderPaths = this.plugin.app.vault.getAllLoadedFiles()
+			.filter((file): file is TFolder => file instanceof TFolder && file.parent?.isRoot() === true)
+			.map(folder => folder.path)
+			.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+
+		this.rainbowFolderIndexByRootPath = new Map(
+			topLevelFolderPaths.map((path, index) => {
+				return [path, index % DEFAULT_RAINBOW_FOLDER_COLORS.length];
+			})
+		);
+	}
+
+	private getRootFolderPathForNavItem(navItem: HTMLElement): string | null {
+		const itemPath = this.getPathForNavItem(navItem);
+		if (itemPath == null) {
+			return null;
+		}
+
+		const normalizedPath = itemPath.replace(/^\/+/, '');
+		if (normalizedPath.length === 0) {
+			return null;
+		}
+
+		const rootPath = normalizedPath.split('/')[0];
+		const isRootFile = !navItem.classList.contains('nav-folder') && !normalizedPath.includes('/');
+		return isRootFile ? null : rootPath;
+	}
+
+	private getPathForNavItem(navItem: HTMLElement): string | null {
+		const path = navItem.getAttribute('data-path')
+			?? navItem.querySelector<HTMLElement>('[data-path]')?.getAttribute('data-path');
+		return path?.trim() || null;
+	}
+
+	private getRainbowFolderColorIndex(rootPath: string): number {
+		const existingIndex = this.rainbowFolderIndexByRootPath.get(rootPath);
+		if (existingIndex != null) {
+			return existingIndex;
+		}
+
+		const nextIndex = this.rainbowFolderIndexByRootPath.size % DEFAULT_RAINBOW_FOLDER_COLORS.length;
+		this.rainbowFolderIndexByRootPath.set(rootPath, nextIndex);
+		return nextIndex;
 	}
 
 	private clearRainbowFolderColors(): void {
