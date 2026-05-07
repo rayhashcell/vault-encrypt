@@ -27,6 +27,227 @@ div[data-type="custom-encrypted-view"] .view-content {
 
 /* END FEATURE ENCRYPTED MD */
 
+/* FEATURE PASSWORD ROTATION */
+
+.custom-encrypt-password-rotation-modal-container {
+  width: clamp(320px, 76vw, 760px);
+  max-width: calc(100vw - 32px);
+}
+
+.custom-encrypt-password-rotation-modal {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+}
+
+.custom-encrypt-password-rotation-modal .setting-item,
+.custom-encrypt-password-rotation-modal .setting-item-info,
+.custom-encrypt-password-rotation-modal .setting-item-control {
+  min-width: 0;
+}
+
+.custom-encrypt-password-rotation-modal .setting-item-control {
+  flex-wrap: wrap;
+}
+
+.custom-encrypt-password-rotation-modal .setting-item-control input {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.custom-encrypt-password-rotation-status,
+.custom-encrypt-password-rotation-empty,
+.custom-encrypt-password-rotation-summary,
+.custom-encrypt-password-rotation-warning,
+.custom-encrypt-password-rotation-backup-path {
+  margin: 10px 0;
+  color: var(--text-muted);
+}
+
+.custom-encrypt-password-rotation-summary.is-warning,
+.custom-encrypt-password-rotation-warning {
+  color: var(--text-warning);
+}
+
+.custom-encrypt-password-rotation-list,
+.custom-encrypt-password-rotation-results {
+  box-sizing: border-box;
+  width: 100%;
+  max-height: min(55vh, 520px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.custom-encrypt-password-rotation-select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 8px 0 10px;
+  padding: 6px 4px;
+  cursor: pointer;
+}
+
+.custom-encrypt-password-rotation-select-all-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: var(--font-semibold);
+}
+
+.custom-encrypt-password-rotation-folder {
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.custom-encrypt-password-rotation-folder:last-child {
+  border-bottom: 0;
+}
+
+.custom-encrypt-password-rotation-folder-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 8px 4px;
+  cursor: pointer;
+}
+
+.custom-encrypt-password-rotation-folder-name,
+.custom-encrypt-password-rotation-file-name,
+.custom-encrypt-password-rotation-file-meta,
+.custom-encrypt-password-rotation-backup-path {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.custom-encrypt-password-rotation-folder-name {
+  flex: 1 1 auto;
+}
+
+.custom-encrypt-password-rotation-files {
+  min-width: 0;
+  padding: 0 0 6px 24px;
+}
+
+.custom-encrypt-password-rotation-file {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 4px;
+}
+
+.custom-encrypt-password-rotation-checkbox {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
+.custom-encrypt-password-rotation-file-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.custom-encrypt-password-rotation-file-meta {
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.custom-encrypt-password-rotation-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.custom-encrypt-password-rotation-progress-bar {
+  width: 100%;
+}
+
+.custom-encrypt-password-rotation-progress-text {
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.custom-encrypt-password-rotation-results details {
+  margin: 6px 0;
+}
+
+.custom-encrypt-password-rotation-results li {
+  overflow-wrap: anywhere;
+  margin: 4px 0;
+}
+
+.custom-encrypt-password-rotation-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 4px;
+  background: transparent;
+  overflow: visible;
+}
+
+.custom-encrypt-password-rotation-action {
+  flex: 0 0 auto;
+  min-width: 88px;
+  position: relative;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.custom-encrypt-password-rotation-action:focus,
+.custom-encrypt-password-rotation-action:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 2px var(--background-primary),
+    inset 0 0 0 4px var(--background-modifier-border-focus);
+}
+
+.custom-encrypt-password-rotation-action.mod-cta:focus,
+.custom-encrypt-password-rotation-action.mod-cta:focus-visible {
+  box-shadow:
+    inset 0 0 0 2px var(--background-primary),
+    inset 0 0 0 4px var(--interactive-accent-hover);
+}
+
+@media (max-width: 640px) {
+  .custom-encrypt-password-rotation-modal-container {
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+  }
+
+  .custom-encrypt-password-rotation-files {
+    padding-left: 14px;
+  }
+
+  .custom-encrypt-password-rotation-modal .setting-item {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .custom-encrypt-password-rotation-modal .setting-item-control {
+    justify-content: flex-start;
+  }
+
+  .custom-encrypt-password-rotation-actions {
+    gap: 10px;
+  }
+
+  .custom-encrypt-password-rotation-action {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+/* END FEATURE PASSWORD ROTATION */
+
 /* FEATURE APPEARANCE HELPERS */
 
 body.custom-encrypt-readable-line-height {

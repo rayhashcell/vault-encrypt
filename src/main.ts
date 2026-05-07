@@ -6,6 +6,7 @@ import { SessionPasswordService } from './services/SessionPasswordService.ts';
 import FeatureInplaceEncrypt from './features/feature-inplace-encrypt/FeatureInplaceEncrypt.ts';
 import FeatureConvertNote from './features/feature-convert-note/FeatureConvertNote.ts';
 import FeatureWholeNoteEncryptV2 from './features/feature-whole-note-encrypt/FeatureWholeNoteEncrypt.ts';
+import FeaturePasswordRotation from './features/feature-password-rotation/FeaturePasswordRotation.ts';
 import { DevConsole } from './services/DevConsole.ts';
 import FeatureAppearance, {
 	DEFAULT_RAINBOW_FOLDER_COLORS,
@@ -33,6 +34,7 @@ export default class MeldEncrypt extends Plugin {
 		this.wholeNoteEncryptFeature = new FeatureWholeNoteEncryptV2();
 		this.enabledFeatures.push(
 			this.wholeNoteEncryptFeature,
+			new FeaturePasswordRotation(),
 			new FeatureAppearance(),
 			new FeatureConvertNote(),
 			new FeatureInplaceEncrypt(),

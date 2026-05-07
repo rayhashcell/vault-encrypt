@@ -1,7 +1,7 @@
 {
 	"id": "custom-encrypt",
 	"name": "Custom Encrypt",
-	"version": "2.4.11",
+	"version": "2.4.12",
 	"minAppVersion": "1.0.3",
 	"description": "Hide secrets in your vault",
 	"author": "meld-cp",
