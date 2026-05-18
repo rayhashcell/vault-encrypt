@@ -1,6 +1,5 @@
 import { IFeatureInplaceEncryptSettings } from "../features/feature-inplace-encrypt/IFeatureInplaceEncryptSettings.ts";
 import { IFeatureWholeNoteEncryptSettings } from "../features/feature-whole-note-encrypt/IFeatureWholeNoteEncryptSettings.ts";
-import { IFeatureAppearanceSettings } from "../features/feature-appearance/IFeatureAppearanceSettings.ts";
 import { SettingsLanguage } from "../i18n.ts";
 
 export interface IMeldEncryptPluginSettings {
@@ -13,5 +12,4 @@ export interface IMeldEncryptPluginSettings {
 
 	featureWholeNoteEncrypt : IFeatureWholeNoteEncryptSettings;
 	featureInplaceEncrypt : IFeatureInplaceEncryptSettings;
-	featureAppearance: IFeatureAppearanceSettings;
 }

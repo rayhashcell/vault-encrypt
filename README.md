@@ -41,7 +41,7 @@ Information about the latest release can be found on the [release notes](https:/
 - Refined remembered-password timeout semantics so prefilled password reads do not extend the timeout, successful password use or save refreshes it, and File scope expires per file.
 - Removed legacy crypto helpers, obsolete inline marker support, external password-file caching, and the empty-selection text prompt for inline encryption.
 - Refined settings labels, password visibility controls, unsupported-format handling, and related documentation.
-- Added opt-in appearance helpers for readable Markdown line height, customizable rainbow file explorer folders, file-type icons, and file extension badges.
+- Moved appearance helpers for readable Markdown line height, rainbow file explorer folders, file-type icons, and file extension badges into the standalone Vault Appearance Tools plugin.
 - Added a mobile-compatible password rotation wizard for selected `.cenc` notes and Markdown files with inline encrypted blocks, with original-content backups where encrypted payloads remain ciphertext.
 
 Report any bugs or features requests [here](https://github.com/meld-cp/obsidian-encrypt/issues).

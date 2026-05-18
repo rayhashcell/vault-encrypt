@@ -8,11 +8,6 @@ import FeatureConvertNote from './features/feature-convert-note/FeatureConvertNo
 import FeatureWholeNoteEncryptV2 from './features/feature-whole-note-encrypt/FeatureWholeNoteEncrypt.ts';
 import FeaturePasswordRotation from './features/feature-password-rotation/FeaturePasswordRotation.ts';
 import { DevConsole } from './services/DevConsole.ts';
-import FeatureAppearance, {
-	DEFAULT_RAINBOW_FOLDER_COLORS,
-	DEFAULT_RAINBOW_FOLDER_COLORS_DARK,
-	DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT,
-} from './features/feature-appearance/FeatureAppearance.ts';
 import {
 	DEFAULT_SETTINGS_LANGUAGE,
 	normalizeSettingsLanguage,
@@ -35,7 +30,6 @@ export default class MeldEncrypt extends Plugin {
 		this.enabledFeatures.push(
 			this.wholeNoteEncryptFeature,
 			new FeaturePasswordRotation(),
-			new FeatureAppearance(),
 			new FeatureConvertNote(),
 			new FeatureInplaceEncrypt(),
 		);
@@ -127,22 +121,10 @@ export default class MeldEncrypt extends Plugin {
 			featureInplaceEncrypt:{
 				markerSearchLimit: 10000,
 				showMarkerWhenReadingDefault: true
-			},
-
-			featureAppearance: {
-				readableLineHeight: false,
-				rainbowFileExplorer: false,
-				rainbowFolderColors: DEFAULT_RAINBOW_FOLDER_COLORS,
-				rainbowFolderColorsLight: DEFAULT_RAINBOW_FOLDER_COLORS_LIGHT,
-				rainbowFolderColorsDark: DEFAULT_RAINBOW_FOLDER_COLORS_DARK,
-				fileExplorerIcons: false,
-				markdownExtensionBadge: false,
 			}
 		}
 
 		const loadedSettings = await this.loadData() as Partial<IMeldEncryptPluginSettings> | null;
-		const loadedAppearanceSettings = loadedSettings?.featureAppearance;
-		const hasLegacyRainbowFolderColors = loadedAppearanceSettings?.rainbowFolderColors != null;
 		this.settings = {
 			settingsLanguage: normalizeSettingsLanguage(loadedSettings?.settingsLanguage),
 			confirmPassword: loadedSettings?.confirmPassword ?? DEFAULT_SETTINGS.confirmPassword,
@@ -157,15 +139,6 @@ export default class MeldEncrypt extends Plugin {
 			featureInplaceEncrypt:{
 				markerSearchLimit: loadedSettings?.featureInplaceEncrypt?.markerSearchLimit ?? DEFAULT_SETTINGS.featureInplaceEncrypt.markerSearchLimit,
 				showMarkerWhenReadingDefault: loadedSettings?.featureInplaceEncrypt?.showMarkerWhenReadingDefault ?? DEFAULT_SETTINGS.featureInplaceEncrypt.showMarkerWhenReadingDefault,
-			},
-			featureAppearance: {
-				readableLineHeight: loadedAppearanceSettings?.readableLineHeight ?? DEFAULT_SETTINGS.featureAppearance.readableLineHeight,
-				rainbowFileExplorer: loadedAppearanceSettings?.rainbowFileExplorer ?? DEFAULT_SETTINGS.featureAppearance.rainbowFileExplorer,
-				rainbowFolderColors: loadedAppearanceSettings?.rainbowFolderColors ?? DEFAULT_SETTINGS.featureAppearance.rainbowFolderColors,
-				rainbowFolderColorsLight: loadedAppearanceSettings?.rainbowFolderColorsLight ?? (hasLegacyRainbowFolderColors ? [] : DEFAULT_SETTINGS.featureAppearance.rainbowFolderColorsLight),
-				rainbowFolderColorsDark: loadedAppearanceSettings?.rainbowFolderColorsDark ?? (hasLegacyRainbowFolderColors ? [] : DEFAULT_SETTINGS.featureAppearance.rainbowFolderColorsDark),
-				fileExplorerIcons: loadedAppearanceSettings?.fileExplorerIcons ?? DEFAULT_SETTINGS.featureAppearance.fileExplorerIcons,
-				markdownExtensionBadge: loadedAppearanceSettings?.markdownExtensionBadge ?? DEFAULT_SETTINGS.featureAppearance.markdownExtensionBadge,
 			}
 		};
 
