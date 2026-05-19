@@ -13,7 +13,7 @@ if you want to view the source, please visit the github repository of this plugi
 
 const prod = (process.argv[2] === 'production');
 
-const packageName = process.env.npm_package_name || 'custom-encrypt';
+const packageName = process.env.npm_package_name || 'vault-encrypt';
 const versionString = process.env.npm_package_version || '0.0.0';
 
 const distDir = prod

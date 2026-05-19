@@ -6,15 +6,11 @@ nav_order: 5
 
 # Release Notes
 
-If you find this plugin useful please support the ongoing maintenance and development of it by [staring ⭐ this repo](https://github.com/meld-cp/obsidian-encrypt) and [buying me a coffee ☕](https://www.buymeacoffee.com/cleon) or consider [sponsoring ❤️ me](https://github.com/sponsors/meld-cp).
+Maintained by rayman.
 
-Thank you for your support 😊
+Please report bugs and feature requests through this repository's issue tracker.
 
-<a href="https://www.buymeacoffee.com/cleon" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important;" ></a>
-
-Please report any bugs or features requests [here](https://github.com/meld-cp/obsidian-encrypt/issues).
-
-The full change log can be found on the [releases](https://github.com/meld-cp/obsidian-encrypt/releases) page.
+Historical release entries below may reference the upstream project they came from.
 
 ## v2.4.5
 

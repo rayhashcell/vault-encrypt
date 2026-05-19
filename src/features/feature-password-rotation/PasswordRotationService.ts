@@ -78,7 +78,7 @@ interface RotationPlanItem {
 }
 
 export class PasswordRotationService {
-	public static readonly BACKUP_ROOT = 'Custom Encrypt Backups/Password Rotation';
+	public static readonly BACKUP_ROOT = 'AA Vault Encrypt Backups/Password Rotation';
 
 	private app: App;
 	private t: Translator;

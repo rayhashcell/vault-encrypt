@@ -1,21 +1,21 @@
 import { Setting } from "obsidian";
-import MeldEncrypt from "../../main.ts";
-import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
-import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
+import VaultEncrypt from "../../main.ts";
+import { IVaultEncryptPluginSettings } from "../../settings/VaultEncryptPluginSettings.ts";
+import { IVaultEncryptPluginFeature } from "../IVaultEncryptPluginFeature.ts";
 import { createTranslator, Translator } from "../../i18n.ts";
 import { PasswordRotationService } from "./PasswordRotationService.ts";
 import { PasswordRotationModal } from "./PasswordRotationModal.ts";
 
-export default class FeaturePasswordRotation implements IMeldEncryptPluginFeature {
-	private plugin: MeldEncrypt;
-	private settings: IMeldEncryptPluginSettings;
+export default class FeaturePasswordRotation implements IVaultEncryptPluginFeature {
+	private plugin: VaultEncrypt;
+	private settings: IVaultEncryptPluginSettings;
 
-	async onload(plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings): Promise<void> {
+	async onload(plugin: VaultEncrypt, settings: IVaultEncryptPluginSettings): Promise<void> {
 		this.plugin = plugin;
 		this.settings = settings;
 
 		this.plugin.addCommand({
-			id: 'custom-encrypt-rotate-selected-passwords',
+			id: 'vault-encrypt-rotate-selected-passwords',
 			name: 'Rotate selected encrypted passwords',
 			icon: 'key-round',
 			callback: () => this.openPasswordRotationModal(),

@@ -1,6 +1,6 @@
-import MeldEncrypt from "../../main.ts";
-import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
-import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
+import VaultEncrypt from "../../main.ts";
+import { IVaultEncryptPluginSettings } from "../../settings/VaultEncryptPluginSettings.ts";
+import { IVaultEncryptPluginFeature } from "../IVaultEncryptPluginFeature.ts";
 import { Notice, TFile, TextFileView } from "obsidian";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
@@ -10,17 +10,17 @@ import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../
 import { EncryptedMarkdownView } from "../feature-whole-note-encrypt/EncryptedMarkdownView.ts";
 import { createTranslator, Translator } from "../../i18n.ts";
 
-export default class FeatureConvertNote implements IMeldEncryptPluginFeature {
+export default class FeatureConvertNote implements IVaultEncryptPluginFeature {
 	
-	plugin: MeldEncrypt;
-	private settings: IMeldEncryptPluginSettings;
+	plugin: VaultEncrypt;
+	private settings: IVaultEncryptPluginSettings;
 	
-	async onload(plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings) {
+	async onload(plugin: VaultEncrypt, settings: IVaultEncryptPluginSettings) {
 		this.plugin = plugin;
 		this.settings = settings;
 
 		this.plugin.addCommand({
-			id: 'custom-encrypt-convert-to-or-from-encrypted-note',
+			id: 'vault-encrypt-convert-to-or-from-encrypted-note',
 			name: 'Convert to or from an Encrypted note',
 			icon: 'file-lock-2',
 			checkCallback: (checking) => this.processCommandConvertActiveNote( checking ),

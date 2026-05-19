@@ -1,8 +1,8 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import { IMeldEncryptPluginFeature } from "../features/IMeldEncryptPluginFeature.ts";
+import { IVaultEncryptPluginFeature } from "../features/IVaultEncryptPluginFeature.ts";
 import { SessionPasswordService } from "../services/SessionPasswordService.ts";
-import MeldEncrypt from "../main.ts";
-import { IMeldEncryptPluginSettings } from "./MeldEncryptPluginSettings.ts";
+import VaultEncrypt from "../main.ts";
+import { IVaultEncryptPluginSettings } from "./VaultEncryptPluginSettings.ts";
 import { DevConsole } from "../services/DevConsole.ts";
 import {
 	createTranslator,
@@ -10,17 +10,17 @@ import {
 	Translator,
 } from "../i18n.ts";
 
-export default class MeldEncryptSettingsTab extends PluginSettingTab {
-	plugin: MeldEncrypt;
-	settings: IMeldEncryptPluginSettings;
+export default class VaultEncryptSettingsTab extends PluginSettingTab {
+	plugin: VaultEncrypt;
+	settings: IVaultEncryptPluginSettings;
 
-	features:IMeldEncryptPluginFeature[];
+	features:IVaultEncryptPluginFeature[];
 
 	constructor(
 		app: App,
-		plugin: MeldEncrypt,
-		settings:IMeldEncryptPluginSettings,
-		features: IMeldEncryptPluginFeature[]
+		plugin: VaultEncrypt,
+		settings:IVaultEncryptPluginSettings,
+		features: IVaultEncryptPluginFeature[]
 	) {
 		super(app, plugin);
 		this.plugin = plugin;

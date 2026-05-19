@@ -9,7 +9,7 @@ nav_order: 4
 To customize the plugin, follow these steps: 
 
  1. Open **Settings** by clicking the **Settings** icon ![settings](assets/set_ico.png) in the toolbar. 
- 2. Select **Custom Encrypt** from the list on the left.
+ 2. Select **Vault Encrypt** from the list on the left.
    
 The following tables list the available settings and their descriptions:
 

@@ -5,7 +5,7 @@ export const DEFAULT_SETTINGS_LANGUAGE: SettingsLanguage = 'en';
 
 const enTranslations = {
 	'settings.language.name': 'Settings language',
-	'settings.language.desc': 'Choose the language used by Custom Encrypt settings and related dialogs.',
+	'settings.language.desc': 'Choose the language used by Vault Encrypt settings and related dialogs.',
 	'settings.language.option.en': 'English',
 	'settings.language.option.zhCn': '简体中文',
 	'settings.confirmPassword.name': 'Confirm password when encrypting',
@@ -120,7 +120,7 @@ export type TranslationKey = keyof typeof enTranslations;
 
 const zhCnTranslations = {
 	'settings.language.name': '设置语言',
-	'settings.language.desc': '选择 Custom Encrypt 设置页和相关弹窗使用的语言。',
+	'settings.language.desc': '选择 Vault Encrypt 设置页和相关弹窗使用的语言。',
 	'settings.language.option.en': 'English',
 	'settings.language.option.zhCn': '简体中文',
 	'settings.confirmPassword.name': '加密时确认密码',

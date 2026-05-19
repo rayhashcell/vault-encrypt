@@ -3,14 +3,14 @@ import { FileData, FileDataHelper, JsonFileEncoding } from "../../services/FileD
 import { PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { ENCRYPTED_FILE_EXTENSIONS } from "../../services/Constants.ts";
-import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
+import { IVaultEncryptPluginSettings } from "../../settings/VaultEncryptPluginSettings.ts";
 import { DevConsole } from "../../services/DevConsole.ts";
 import { createTranslator, Translator } from "../../i18n.ts";
 
 export class EncryptedMarkdownView extends MarkdownView {
 
-	static VIEW_TYPE = 'custom-encrypted-view';
-	private pluginSettings: IMeldEncryptPluginSettings;
+	static VIEW_TYPE = 'vault-encrypted-view';
+	private pluginSettings: IVaultEncryptPluginSettings;
 
 	passwordAndHint : PasswordAndHint | null = null;
 	encryptedData : FileData | null = null;
@@ -25,7 +25,7 @@ export class EncryptedMarkdownView extends MarkdownView {
 
 	origFile:TFile | null; // used resync password cache when renaming the file
 
-	constructor(leaf: WorkspaceLeaf, settings: IMeldEncryptPluginSettings) {
+	constructor(leaf: WorkspaceLeaf, settings: IVaultEncryptPluginSettings) {
 		super(leaf);
 		this.pluginSettings = settings;
 	}

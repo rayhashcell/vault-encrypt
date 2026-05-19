@@ -1,8 +1,8 @@
 import { Editor, EditorPosition, Notice, Setting, MarkdownPostProcessorContext, MarkdownView } from "obsidian";
 import DecryptModal from "./DecryptModal.ts";
-import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
-import MeldEncrypt from "../../main.ts";
-import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
+import { IVaultEncryptPluginFeature } from "../IVaultEncryptPluginFeature.ts";
+import VaultEncrypt from "../../main.ts";
+import { IVaultEncryptPluginSettings } from "../../settings/VaultEncryptPluginSettings.ts";
 import { IFeatureInplaceEncryptSettings } from "./IFeatureInplaceEncryptSettings.ts";
 import PasswordModal from "./PasswordModal.ts";
 import { UiHelper } from "../../services/UiHelper.ts";
@@ -18,12 +18,12 @@ enum EncryptOrDecryptMode{
 	Decrypt = 'decrypt'
 }
 
-export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
-	plugin:MeldEncrypt;
-	pluginSettings: IMeldEncryptPluginSettings;
+export default class FeatureInplaceEncrypt implements IVaultEncryptPluginFeature{
+	plugin:VaultEncrypt;
+	pluginSettings: IVaultEncryptPluginSettings;
 	featureSettings:IFeatureInplaceEncryptSettings;
 
-	async onload(plugin:MeldEncrypt, settings:IMeldEncryptPluginSettings) {
+	async onload(plugin:VaultEncrypt, settings:IVaultEncryptPluginSettings) {
 		this.plugin = plugin;
 		this.pluginSettings = settings;
 		this.featureSettings = settings.featureInplaceEncrypt;
@@ -33,14 +33,14 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		);
 
 		plugin.addCommand({
-			id: 'custom-encrypt-in-place-encrypt',
+			id: 'vault-encrypt-in-place-encrypt',
 			name: 'Encrypt Selection',
 			icon: 'lock-keyhole',
 			editorCheckCallback: (checking, editor, view) => this.processEncryptCommand( checking, editor )
 		});
 
 		plugin.addCommand({
-			id: 'custom-encrypt-in-place-decrypt',
+			id: 'vault-encrypt-in-place-decrypt',
 			name: 'Decrypt',
 			icon: 'lock-keyhole-open',
 			editorCheckCallback: (checking, editor, view) => this.processDecryptCommand( checking, editor )
@@ -86,10 +86,10 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 
 	private buildReadingMarkerNode( encryptedText: string ): HTMLElement {
 		return createSpan({
-			cls: 'custom-encrypt-inline-reading-marker',
+			cls: 'vault-encrypt-inline-reading-marker',
 			text: ENCRYPTED_ICON,
 			attr: {
-				'data-custom-encrypt-encrypted' : encryptedText
+				'data-vault-encrypt-encrypted' : encryptedText
 			}
 		});
 	}
@@ -226,7 +226,7 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 		const replacementNodes = this.replaceMarkersRecursive(el);
 		el.replaceWith( ...replacementNodes );
 		// bind events
-		const elIndicators = el.querySelectorAll('.custom-encrypt-inline-reading-marker');
+		const elIndicators = el.querySelectorAll('.vault-encrypt-inline-reading-marker');
 		this.bindReadingIndicatorEventHandlers( ctx.sourcePath, elIndicators );
 	}
 
@@ -242,7 +242,7 @@ export default class FeatureInplaceEncrypt implements IMeldEncryptPluginFeature{
 				if ( targetEl == null ){
 					return;
 				}
-				const encryptedText = targetEl.dataset['customEncryptEncrypted'] as string;
+					const encryptedText = targetEl.dataset['vaultEncryptEncrypted'] as string;
 				if ( encryptedText == null ){
 					return;
 				}

@@ -44,7 +44,7 @@ export default class PasswordModal extends Modal {
 		const { contentEl } = this;
 
 		contentEl.empty();
-		contentEl.classList.add('custom-encrypt-password-modal');
+		contentEl.classList.add('vault-encrypt-password-modal');
 
 		this.invalidate();
 

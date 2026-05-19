@@ -1,22 +1,22 @@
-import MeldEncrypt from "../../main.ts";
-import { IMeldEncryptPluginFeature } from "../IMeldEncryptPluginFeature.ts";
+import VaultEncrypt from "../../main.ts";
+import { IVaultEncryptPluginFeature } from "../IVaultEncryptPluginFeature.ts";
 import { EncryptedMarkdownView } from "./EncryptedMarkdownView.ts";
 import { MarkdownView, TFolder, normalizePath, moment, TFile, Notice } from "obsidian";
 import PluginPasswordModal from "../../PluginPasswordModal.ts";
 import { ExpiredSessionPasswordCacheItem, PasswordAndHint, SessionPasswordService } from "../../services/SessionPasswordService.ts";
 import { FileDataHelper, JsonFileEncoding } from "../../services/FileDataHelper.ts";
 import { ENCRYPTED_FILE_EXTENSIONS, ENCRYPTED_FILE_EXTENSION_DEFAULT } from "../../services/Constants.ts";
-import { IMeldEncryptPluginSettings } from "../../settings/MeldEncryptPluginSettings.ts";
+import { IVaultEncryptPluginSettings } from "../../settings/VaultEncryptPluginSettings.ts";
 import { createTranslator, Translator } from "../../i18n.ts";
 
-export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeature {
+export default class FeatureWholeNoteEncryptV2 implements IVaultEncryptPluginFeature {
 
-	plugin: MeldEncrypt;
-	private settings: IMeldEncryptPluginSettings;
+	plugin: VaultEncrypt;
+	private settings: IVaultEncryptPluginSettings;
 
 	private statusIndicator: HTMLElement;
 
-	async onload( plugin: MeldEncrypt, settings: IMeldEncryptPluginSettings ) {
+	async onload( plugin: VaultEncrypt, settings: IVaultEncryptPluginSettings ) {
 		this.plugin = plugin;
 		this.settings = settings;
 		//this.settings = settings.featureWholeNoteEncrypt;
@@ -30,14 +30,14 @@ export default class FeatureWholeNoteEncryptV2 implements IMeldEncryptPluginFeat
 		});
 
 		this.plugin.addCommand({
-			id: 'custom-encrypt-create-new-note',
+			id: 'vault-encrypt-create-new-note',
 			name: 'Create new encrypted note',
 			icon: 'file-lock-2',
 			callback: async () => await this.processCreateNewEncryptedNoteCommand( this.getDefaultFileFolder() ),
 		});
 
 		this.plugin.addCommand({
-			id: 'custom-encrypt-close-and-forget',
+			id: 'vault-encrypt-close-and-forget',
 			name: 'Lock and Close all open encrypted notes',
 			icon: 'book-lock',
 			callback: async () => await this.processLockAndCloseAllEncryptedNotesCommand(),

@@ -2,7 +2,7 @@
 
 ## Project Context
 
-This repository is the Custom Encrypt Obsidian plugin. It is a fork/customization of Meld Encrypt focused on encrypted whole-note files and selected inline text.
+This repository is the Vault Encrypt Obsidian plugin focused on encrypted whole-note files and selected inline text.
 
 Treat this project as security-sensitive. The most important invariant is:
 
@@ -16,8 +16,8 @@ The latest commit before the current working changes is:
 
 The README `Latest Changes > Unreleased` section also records the current change set. Keep future work consistent with these decisions:
 
-- The plugin identity is now `custom-encrypt` / `Custom Encrypt`.
-- Runtime identifiers, command IDs, view type, CSS hooks, and docs were moved away from Meld Encrypt naming.
+- The plugin identity is now `vault-encrypt` / `Vault Encrypt`.
+- Runtime identifiers, command IDs, view type, CSS hooks, and docs use Vault Encrypt naming.
 - Whole-note encrypted files use the `.cenc` extension.
 - Supported whole-note encrypted file data is limited to the current v2 / `2.0` format.
 - Inline encryption uses the shield `@v2` marker format, currently `🛡️\`@v2 ...\`🛡️` or hidden in Markdown comments.
@@ -76,11 +76,11 @@ Use these checks after security-sensitive changes:
 
 When updating the installed test plugin, build first and copy the generated files from:
 
-- `dist/custom-encrypt-<version>/custom-encrypt/`
+- `dist/vault-encrypt-<version>/vault-encrypt/`
 
 to:
 
-- `/Users/bisco/private/obvault/.obsidian/plugins/custom-encrypt/`
+- `/Users/bisco/private/obvault/.obsidian/plugins/vault-encrypt/`
 
 ## Release Process
 
@@ -97,7 +97,7 @@ For normal GitHub releases:
 5. Commit the release changes.
 6. Create and push a Git tag with a `v` prefix, for example `v2.4.11`.
 
-The `Publish GitHub Release` GitHub Actions workflow is triggered by `v*.*.*` tags or by manual dispatch. It builds the plugin and publishes a GitHub Release named after the `v`-prefixed tag. The workflow uploads exactly these plugin files from `dist/custom-encrypt-<version>/custom-encrypt/`:
+The `Publish GitHub Release` GitHub Actions workflow is triggered by `v*.*.*` tags or by manual dispatch. It builds the plugin and publishes a GitHub Release named after the `v`-prefixed tag. The workflow uploads exactly these plugin files from `dist/vault-encrypt-<version>/vault-encrypt/`:
 
 - `main.js`
 - `manifest.json`

@@ -1,10 +1,10 @@
 /* FEATURE IN LINE */
 
-.custom-encrypt-inline-reading-marker {
+.vault-encrypt-inline-reading-marker {
 	cursor: pointer;
 }
 
-.custom-encrypt-decrypt-modal textarea{
+.vault-encrypt-decrypt-modal textarea{
 	width: 100%;
 	min-height: 3em;
 	resize: vertical;
@@ -14,13 +14,13 @@
 
 /* FEATURE ENCRYPTED MD */
 
-div[data-type="custom-encrypted-view"] .view-content {
+div[data-type="vault-encrypted-view"] .view-content {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50"><path d="M 25 2 C 17.832484 2 12 7.8324839 12 15 L 12 21 L 8 21 C 6.3550302 21 5 22.35503 5 24 L 5 47 C 5 48.64497 6.3550302 50 8 50 L 42 50 C 43.64497 50 45 48.64497 45 47 L 45 24 C 45 22.35503 43.64497 21 42 21 L 38 21 L 38 15 C 38 7.8324839 32.167516 2 25 2 z M 25 4 C 31.086484 4 36 8.9135161 36 15 L 36 21 L 14 21 L 14 15 C 14 8.9135161 18.913516 4 25 4 z M 8 23 L 42 23 C 42.56503 23 43 23.43497 43 24 L 43 47 C 43 47.56503 42.56503 48 42 48 L 8 48 C 7.4349698 48 7 47.56503 7 47 L 7 24 C 7 23.43497 7.4349698 23 8 23 z M 13 34 A 2 2 0 0 0 11 36 A 2 2 0 0 0 13 38 A 2 2 0 0 0 15 36 A 2 2 0 0 0 13 34 z M 21 34 A 2 2 0 0 0 19 36 A 2 2 0 0 0 21 38 A 2 2 0 0 0 23 36 A 2 2 0 0 0 21 34 z M 29 34 A 2 2 0 0 0 27 36 A 2 2 0 0 0 29 38 A 2 2 0 0 0 31 36 A 2 2 0 0 0 29 34 z M 37 34 A 2 2 0 0 0 35 36 A 2 2 0 0 0 37 38 A 2 2 0 0 0 39 36 A 2 2 0 0 0 37 34 z" fill-opacity="0.02"></path></svg>');
 }
 
-.workspace-leaf-content[data-type='custom-encrypted-view'] .view-content {
+.workspace-leaf-content[data-type='vault-encrypted-view'] .view-content {
   padding: 0;
   overflow: hidden;
 }
@@ -29,48 +29,48 @@ div[data-type="custom-encrypted-view"] .view-content {
 
 /* FEATURE PASSWORD ROTATION */
 
-.custom-encrypt-password-rotation-modal-container {
+.vault-encrypt-password-rotation-modal-container {
   width: clamp(320px, 76vw, 760px);
   max-width: calc(100vw - 32px);
 }
 
-.custom-encrypt-password-rotation-modal {
+.vault-encrypt-password-rotation-modal {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
 }
 
-.custom-encrypt-password-rotation-modal .setting-item,
-.custom-encrypt-password-rotation-modal .setting-item-info,
-.custom-encrypt-password-rotation-modal .setting-item-control {
+.vault-encrypt-password-rotation-modal .setting-item,
+.vault-encrypt-password-rotation-modal .setting-item-info,
+.vault-encrypt-password-rotation-modal .setting-item-control {
   min-width: 0;
 }
 
-.custom-encrypt-password-rotation-modal .setting-item-control {
+.vault-encrypt-password-rotation-modal .setting-item-control {
   flex-wrap: wrap;
 }
 
-.custom-encrypt-password-rotation-modal .setting-item-control input {
+.vault-encrypt-password-rotation-modal .setting-item-control input {
   max-width: 100%;
   min-width: 0;
 }
 
-.custom-encrypt-password-rotation-status,
-.custom-encrypt-password-rotation-empty,
-.custom-encrypt-password-rotation-summary,
-.custom-encrypt-password-rotation-warning,
-.custom-encrypt-password-rotation-backup-path {
+.vault-encrypt-password-rotation-status,
+.vault-encrypt-password-rotation-empty,
+.vault-encrypt-password-rotation-summary,
+.vault-encrypt-password-rotation-warning,
+.vault-encrypt-password-rotation-backup-path {
   margin: 10px 0;
   color: var(--text-muted);
 }
 
-.custom-encrypt-password-rotation-summary.is-warning,
-.custom-encrypt-password-rotation-warning {
+.vault-encrypt-password-rotation-summary.is-warning,
+.vault-encrypt-password-rotation-warning {
   color: var(--text-warning);
 }
 
-.custom-encrypt-password-rotation-list,
-.custom-encrypt-password-rotation-results {
+.vault-encrypt-password-rotation-list,
+.vault-encrypt-password-rotation-results {
   box-sizing: border-box;
   width: 100%;
   max-height: min(55vh, 520px);
@@ -81,7 +81,7 @@ div[data-type="custom-encrypted-view"] .view-content {
   padding: 6px;
 }
 
-.custom-encrypt-password-rotation-select-all {
+.vault-encrypt-password-rotation-select-all {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -91,21 +91,21 @@ div[data-type="custom-encrypted-view"] .view-content {
   cursor: pointer;
 }
 
-.custom-encrypt-password-rotation-select-all-text {
+.vault-encrypt-password-rotation-select-all-text {
   min-width: 0;
   overflow-wrap: anywhere;
   font-weight: var(--font-semibold);
 }
 
-.custom-encrypt-password-rotation-folder {
+.vault-encrypt-password-rotation-folder {
   border-bottom: 1px solid var(--background-modifier-border);
 }
 
-.custom-encrypt-password-rotation-folder:last-child {
+.vault-encrypt-password-rotation-folder:last-child {
   border-bottom: 0;
 }
 
-.custom-encrypt-password-rotation-folder-summary {
+.vault-encrypt-password-rotation-folder-summary {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -115,24 +115,24 @@ div[data-type="custom-encrypted-view"] .view-content {
   cursor: pointer;
 }
 
-.custom-encrypt-password-rotation-folder-name,
-.custom-encrypt-password-rotation-file-name,
-.custom-encrypt-password-rotation-file-meta,
-.custom-encrypt-password-rotation-backup-path {
+.vault-encrypt-password-rotation-folder-name,
+.vault-encrypt-password-rotation-file-name,
+.vault-encrypt-password-rotation-file-meta,
+.vault-encrypt-password-rotation-backup-path {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.custom-encrypt-password-rotation-folder-name {
+.vault-encrypt-password-rotation-folder-name {
   flex: 1 1 auto;
 }
 
-.custom-encrypt-password-rotation-files {
+.vault-encrypt-password-rotation-files {
   min-width: 0;
   padding: 0 0 6px 24px;
 }
 
-.custom-encrypt-password-rotation-file {
+.vault-encrypt-password-rotation-file {
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -140,49 +140,49 @@ div[data-type="custom-encrypted-view"] .view-content {
   padding: 6px 4px;
 }
 
-.custom-encrypt-password-rotation-checkbox {
+.vault-encrypt-password-rotation-checkbox {
   flex: 0 0 auto;
   margin-top: 2px;
 }
 
-.custom-encrypt-password-rotation-file-text {
+.vault-encrypt-password-rotation-file-text {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
 
-.custom-encrypt-password-rotation-file-meta {
+.vault-encrypt-password-rotation-file-meta {
   color: var(--text-muted);
   font-size: var(--font-ui-smaller);
 }
 
-.custom-encrypt-password-rotation-progress {
+.vault-encrypt-password-rotation-progress {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin: 14px 0;
 }
 
-.custom-encrypt-password-rotation-progress-bar {
+.vault-encrypt-password-rotation-progress-bar {
   width: 100%;
 }
 
-.custom-encrypt-password-rotation-progress-text {
+.vault-encrypt-password-rotation-progress-text {
   color: var(--text-muted);
   overflow-wrap: anywhere;
 }
 
-.custom-encrypt-password-rotation-results details {
+.vault-encrypt-password-rotation-results details {
   margin: 6px 0;
 }
 
-.custom-encrypt-password-rotation-results li {
+.vault-encrypt-password-rotation-results li {
   overflow-wrap: anywhere;
   margin: 4px 0;
 }
 
-.custom-encrypt-password-rotation-actions {
+.vault-encrypt-password-rotation-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -193,7 +193,7 @@ div[data-type="custom-encrypted-view"] .view-content {
   overflow: visible;
 }
 
-.custom-encrypt-password-rotation-action {
+.vault-encrypt-password-rotation-action {
   flex: 0 0 auto;
   min-width: 88px;
   position: relative;
@@ -201,46 +201,46 @@ div[data-type="custom-encrypted-view"] .view-content {
   overflow-wrap: anywhere;
 }
 
-.custom-encrypt-password-rotation-action:focus,
-.custom-encrypt-password-rotation-action:focus-visible {
+.vault-encrypt-password-rotation-action:focus,
+.vault-encrypt-password-rotation-action:focus-visible {
   outline: none;
   box-shadow:
     inset 0 0 0 2px var(--background-primary),
     inset 0 0 0 4px var(--background-modifier-border-focus);
 }
 
-.custom-encrypt-password-rotation-action.mod-cta:focus,
-.custom-encrypt-password-rotation-action.mod-cta:focus-visible {
+.vault-encrypt-password-rotation-action.mod-cta:focus,
+.vault-encrypt-password-rotation-action.mod-cta:focus-visible {
   box-shadow:
     inset 0 0 0 2px var(--background-primary),
     inset 0 0 0 4px var(--interactive-accent-hover);
 }
 
 @media (max-width: 640px) {
-  .custom-encrypt-password-rotation-modal-container {
+  .vault-encrypt-password-rotation-modal-container {
     width: calc(100vw - 16px);
     max-width: calc(100vw - 16px);
   }
 
-  .custom-encrypt-password-rotation-files {
+  .vault-encrypt-password-rotation-files {
     padding-left: 14px;
   }
 
-  .custom-encrypt-password-rotation-modal .setting-item {
+  .vault-encrypt-password-rotation-modal .setting-item {
     align-items: stretch;
     flex-direction: column;
     gap: 8px;
   }
 
-  .custom-encrypt-password-rotation-modal .setting-item-control {
+  .vault-encrypt-password-rotation-modal .setting-item-control {
     justify-content: flex-start;
   }
 
-  .custom-encrypt-password-rotation-actions {
+  .vault-encrypt-password-rotation-actions {
     gap: 10px;
   }
 
-  .custom-encrypt-password-rotation-action {
+  .vault-encrypt-password-rotation-action {
     flex: 1 1 0;
     min-width: 0;
   }

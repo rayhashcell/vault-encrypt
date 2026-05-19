@@ -1,5 +1,5 @@
 {
-	"name": "custom-encrypt",
+	"name": "vault-encrypt",
 	"version": "2.4.13",
 	"description": "Hide secrets in your vault",
 	"main": "main.js",
@@ -13,7 +13,7 @@
 		"build-tool-mdenc": "tsc -noEmit -skipLibCheck && node esbuild-tool-mdenc.config.mjs production"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "rayman",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "24.0.13",

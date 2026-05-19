@@ -1,7 +1,7 @@
 import { Notice, Plugin } from 'obsidian';
-import MeldEncryptSettingsTab from './settings/MeldEncryptSettingsTab.ts';
-import { IMeldEncryptPluginSettings } from './settings/MeldEncryptPluginSettings.ts';
-import { IMeldEncryptPluginFeature } from './features/IMeldEncryptPluginFeature.ts';
+import VaultEncryptSettingsTab from './settings/VaultEncryptSettingsTab.ts';
+import { IVaultEncryptPluginSettings } from './settings/VaultEncryptPluginSettings.ts';
+import { IVaultEncryptPluginFeature } from './features/IVaultEncryptPluginFeature.ts';
 import { SessionPasswordService } from './services/SessionPasswordService.ts';
 import FeatureInplaceEncrypt from './features/feature-inplace-encrypt/FeatureInplaceEncrypt.ts';
 import FeatureConvertNote from './features/feature-convert-note/FeatureConvertNote.ts';
@@ -13,11 +13,11 @@ import {
 	normalizeSettingsLanguage,
 } from './i18n.ts';
 
-export default class MeldEncrypt extends Plugin {
+export default class VaultEncrypt extends Plugin {
 
-	private settings: IMeldEncryptPluginSettings;
+	private settings: IVaultEncryptPluginSettings;
 
-	private enabledFeatures : IMeldEncryptPluginFeature[] = [];
+	private enabledFeatures : IVaultEncryptPluginFeature[] = [];
 	private wholeNoteEncryptFeature: FeatureWholeNoteEncryptV2;
 	private isAutoLockingExpiredSession = false;
 
@@ -35,7 +35,7 @@ export default class MeldEncrypt extends Plugin {
 		);
 
 		this.addSettingTab(
-			new MeldEncryptSettingsTab(
+			new VaultEncryptSettingsTab(
 				this.app,
 				this,
 				this.settings,
@@ -45,7 +45,7 @@ export default class MeldEncrypt extends Plugin {
 		// End Settings
 
 		this.addCommand({
-			id: 'custom-encrypt-clear-password-cache',
+			id: 'vault-encrypt-clear-password-cache',
 			name: 'Clear Session Password Cache and Lock Notes',
 			icon: 'shield-ellipsis',
 			callback: async () => await this.clearPasswordCacheAndLockEncryptedNotes(),
@@ -107,7 +107,7 @@ export default class MeldEncrypt extends Plugin {
 
 	async loadSettings() {
 
-		const DEFAULT_SETTINGS: IMeldEncryptPluginSettings = {
+		const DEFAULT_SETTINGS: IVaultEncryptPluginSettings = {
 			settingsLanguage: DEFAULT_SETTINGS_LANGUAGE,
 			confirmPassword: true,
 			rememberPassword: true,
@@ -124,7 +124,7 @@ export default class MeldEncrypt extends Plugin {
 			}
 		}
 
-		const loadedSettings = await this.loadData() as Partial<IMeldEncryptPluginSettings> | null;
+		const loadedSettings = await this.loadData() as Partial<IVaultEncryptPluginSettings> | null;
 		this.settings = {
 			settingsLanguage: normalizeSettingsLanguage(loadedSettings?.settingsLanguage),
 			confirmPassword: loadedSettings?.confirmPassword ?? DEFAULT_SETTINGS.confirmPassword,

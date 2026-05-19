@@ -2,7 +2,7 @@ import { IFeatureInplaceEncryptSettings } from "../features/feature-inplace-encr
 import { IFeatureWholeNoteEncryptSettings } from "../features/feature-whole-note-encrypt/IFeatureWholeNoteEncryptSettings.ts";
 import { SettingsLanguage } from "../i18n.ts";
 
-export interface IMeldEncryptPluginSettings {
+export interface IVaultEncryptPluginSettings {
 	settingsLanguage: SettingsLanguage;
 	confirmPassword: boolean;
 	rememberPassword: boolean;

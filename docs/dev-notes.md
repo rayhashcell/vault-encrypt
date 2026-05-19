@@ -17,7 +17,7 @@ To release a new version:
 3. Commit the release changes.
 4. Create and push a tag using the exact version number with a `v` prefix, such as `v2.4.11`.
 
-The `Publish GitHub Release` workflow builds the plugin and publishes the GitHub release automatically. It uploads the three plugin files from `dist/custom-encrypt-<ver>/custom-encrypt/`:
+The `Publish GitHub Release` workflow builds the plugin and publishes the GitHub release automatically. It uploads the three plugin files from `dist/vault-encrypt-<ver>/vault-encrypt/`:
 
 * `main.js`
 * `manifest.json`

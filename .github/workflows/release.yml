@@ -73,7 +73,7 @@ jobs:
           set -euo pipefail
 
           version="${{ steps.version.outputs.plugin_version }}"
-          asset_dir="dist/custom-encrypt-${version}/custom-encrypt"
+          asset_dir="dist/vault-encrypt-${version}/vault-encrypt"
           assets=(
             "${asset_dir}/main.js"
             "${asset_dir}/manifest.json"

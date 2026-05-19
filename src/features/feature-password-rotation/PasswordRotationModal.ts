@@ -29,8 +29,8 @@ export class PasswordRotationModal extends Modal {
 	}
 
 	override onOpen(): void {
-		this.modalEl.addClass('custom-encrypt-password-rotation-modal-container');
-		this.contentEl.addClass('custom-encrypt-password-rotation-modal');
+		this.modalEl.addClass('vault-encrypt-password-rotation-modal-container');
+		this.contentEl.addClass('vault-encrypt-password-rotation-modal');
 		this.scanCandidates();
 	}
 
@@ -52,7 +52,7 @@ export class PasswordRotationModal extends Modal {
 		;
 
 		const scanEl = this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-status',
+			cls: 'vault-encrypt-password-rotation-status',
 		});
 		scanEl.setText(
 			total > 0
@@ -73,7 +73,7 @@ export class PasswordRotationModal extends Modal {
 
 		if ( this.candidates.length == 0 ){
 			this.contentEl.createDiv({
-				cls: 'custom-encrypt-password-rotation-empty',
+				cls: 'vault-encrypt-password-rotation-empty',
 				text: this.t('passwordRotation.scan.empty'),
 			});
 			const actionsEl = this.createActionsEl();
@@ -83,7 +83,7 @@ export class PasswordRotationModal extends Modal {
 
 		const selectedCount = this.getSelectedCandidates().length;
 		const summaryEl = this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-summary',
+			cls: 'vault-encrypt-password-rotation-summary',
 			text: this.t('passwordRotation.selection.selectedCount', {
 				selected: selectedCount,
 				total: this.candidates.length,
@@ -93,7 +93,7 @@ export class PasswordRotationModal extends Modal {
 		this.renderSelectAllControl(selectedCount);
 
 		const listEl = this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-list',
+			cls: 'vault-encrypt-password-rotation-list',
 		});
 
 		for ( const group of this.groupCandidates() ) {
@@ -116,12 +116,12 @@ export class PasswordRotationModal extends Modal {
 
 	private renderSelectAllControl(selectedCount: number): void {
 		const rowEl = this.contentEl.createEl('label', {
-			cls: 'custom-encrypt-password-rotation-select-all',
+			cls: 'vault-encrypt-password-rotation-select-all',
 		});
 
 		const checkbox = rowEl.createEl('input', {
 			type: 'checkbox',
-			cls: 'custom-encrypt-password-rotation-checkbox',
+			cls: 'vault-encrypt-password-rotation-checkbox',
 		});
 		checkbox.checked = selectedCount == this.candidates.length;
 		checkbox.indeterminate = selectedCount > 0 && selectedCount < this.candidates.length;
@@ -139,7 +139,7 @@ export class PasswordRotationModal extends Modal {
 		};
 
 		rowEl.createSpan({
-			cls: 'custom-encrypt-password-rotation-select-all-text',
+			cls: 'vault-encrypt-password-rotation-select-all-text',
 			text: this.t('passwordRotation.selection.selectAll'),
 		});
 	}
@@ -151,7 +151,7 @@ export class PasswordRotationModal extends Modal {
 	): void {
 		const selectedCount = candidates.filter(candidate => candidate.selected).length;
 		const detailsEl = containerEl.createEl('details', {
-			cls: 'custom-encrypt-password-rotation-folder',
+			cls: 'vault-encrypt-password-rotation-folder',
 		});
 		detailsEl.open = this.openFolders.has(folderPath) || selectedCount > 0;
 		detailsEl.ontoggle = () => {
@@ -163,12 +163,12 @@ export class PasswordRotationModal extends Modal {
 		};
 
 		const summaryEl = detailsEl.createEl('summary', {
-			cls: 'custom-encrypt-password-rotation-folder-summary',
+			cls: 'vault-encrypt-password-rotation-folder-summary',
 		});
 
 		const folderCheckbox = summaryEl.createEl('input', {
 			type: 'checkbox',
-			cls: 'custom-encrypt-password-rotation-checkbox',
+			cls: 'vault-encrypt-password-rotation-checkbox',
 		});
 		folderCheckbox.checked = selectedCount == candidates.length;
 		folderCheckbox.indeterminate = selectedCount > 0 && selectedCount < candidates.length;
@@ -183,7 +183,7 @@ export class PasswordRotationModal extends Modal {
 		};
 
 		summaryEl.createSpan({
-			cls: 'custom-encrypt-password-rotation-folder-name',
+			cls: 'vault-encrypt-password-rotation-folder-name',
 			text: this.t('passwordRotation.folder.summary', {
 				folder: folderPath === '/' ? this.t('passwordRotation.folder.root') : folderPath,
 				selected: selectedCount,
@@ -192,7 +192,7 @@ export class PasswordRotationModal extends Modal {
 		});
 
 		const filesEl = detailsEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-files',
+			cls: 'vault-encrypt-password-rotation-files',
 		});
 
 		for ( const candidate of candidates ) {
@@ -202,12 +202,12 @@ export class PasswordRotationModal extends Modal {
 
 	private renderCandidateRow(containerEl: HTMLElement, candidate: PasswordRotationCandidate): void {
 		const rowEl = containerEl.createEl('label', {
-			cls: 'custom-encrypt-password-rotation-file',
+			cls: 'vault-encrypt-password-rotation-file',
 		});
 
 		const checkbox = rowEl.createEl('input', {
 			type: 'checkbox',
-			cls: 'custom-encrypt-password-rotation-checkbox',
+			cls: 'vault-encrypt-password-rotation-checkbox',
 		});
 		checkbox.checked = candidate.selected;
 		checkbox.onchange = () => {
@@ -216,14 +216,14 @@ export class PasswordRotationModal extends Modal {
 		};
 
 		const textEl = rowEl.createSpan({
-			cls: 'custom-encrypt-password-rotation-file-text',
+			cls: 'vault-encrypt-password-rotation-file-text',
 		});
 		textEl.createSpan({
-			cls: 'custom-encrypt-password-rotation-file-name',
+			cls: 'vault-encrypt-password-rotation-file-name',
 			text: candidate.file.name,
 		});
 		textEl.createSpan({
-			cls: 'custom-encrypt-password-rotation-file-meta',
+			cls: 'vault-encrypt-password-rotation-file-meta',
 			text: candidate.type === 'whole-note'
 				? this.t('passwordRotation.type.wholeNote')
 				: this.t('passwordRotation.type.inline', {
@@ -412,15 +412,15 @@ export class PasswordRotationModal extends Modal {
 		;
 
 		const progressWrapEl = this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-progress',
+			cls: 'vault-encrypt-password-rotation-progress',
 		});
 		this.progressBarEl = progressWrapEl.createEl('progress', {
-			cls: 'custom-encrypt-password-rotation-progress-bar',
+			cls: 'vault-encrypt-password-rotation-progress-bar',
 		});
 		this.progressBarEl.max = Math.max(this.getSelectedCandidates().length, 1);
 		this.progressBarEl.value = 0;
 		this.progressTextEl = progressWrapEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-progress-text',
+			cls: 'vault-encrypt-password-rotation-progress-text',
 			text: this.t('passwordRotation.progress.starting'),
 		});
 	}
@@ -453,7 +453,7 @@ export class PasswordRotationModal extends Modal {
 		;
 
 		this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-summary',
+			cls: 'vault-encrypt-password-rotation-summary',
 			text: this.t('passwordRotation.result.summary', {
 				success: result.successes.length,
 				failed: result.failures.length,
@@ -463,7 +463,7 @@ export class PasswordRotationModal extends Modal {
 
 		if ( result.backupRoot != null ){
 			this.contentEl.createDiv({
-				cls: 'custom-encrypt-password-rotation-backup-path',
+				cls: 'vault-encrypt-password-rotation-backup-path',
 				text: this.t('passwordRotation.result.backupRoot', {
 					path: result.backupRoot,
 				}),
@@ -472,19 +472,19 @@ export class PasswordRotationModal extends Modal {
 
 		if ( result.wasPrecheckBlocked ){
 			this.contentEl.createDiv({
-				cls: 'custom-encrypt-password-rotation-warning',
+				cls: 'vault-encrypt-password-rotation-warning',
 				text: this.t('passwordRotation.result.precheckBlocked'),
 			});
 		}
 		if ( result.wasRolledBack ){
 			this.contentEl.createDiv({
-				cls: 'custom-encrypt-password-rotation-warning',
+				cls: 'vault-encrypt-password-rotation-warning',
 				text: this.t('passwordRotation.result.rolledBack'),
 			});
 		}
 
 		const resultsEl = this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-results',
+			cls: 'vault-encrypt-password-rotation-results',
 		});
 		this.renderSuccesses(resultsEl, result);
 		this.renderFailures(resultsEl, result);
@@ -580,7 +580,7 @@ export class PasswordRotationModal extends Modal {
 
 	private createActionsEl(): HTMLElement {
 		return this.contentEl.createDiv({
-			cls: 'custom-encrypt-password-rotation-actions',
+			cls: 'vault-encrypt-password-rotation-actions',
 		});
 	}
 
@@ -591,7 +591,7 @@ export class PasswordRotationModal extends Modal {
 		options: { cta?: boolean; disabled?: boolean } = {}
 	): HTMLButtonElement {
 		const buttonEl = containerEl.createEl('button', {
-			cls: 'custom-encrypt-password-rotation-action',
+			cls: 'vault-encrypt-password-rotation-action',
 			text,
 		});
 		buttonEl.type = 'button';

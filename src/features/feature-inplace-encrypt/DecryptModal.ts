@@ -29,7 +29,7 @@ export default class DecryptModal extends Modal {
 		const { contentEl } = this;
 
 		contentEl.empty();
-		contentEl.classList.add('custom-encrypt-decrypt-modal');
+		contentEl.classList.add('vault-encrypt-decrypt-modal');
 
 		let cTextArea : TextAreaComponent;
 		const sText = new Setting(contentEl)
