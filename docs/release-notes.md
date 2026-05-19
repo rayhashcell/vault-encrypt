@@ -12,6 +12,18 @@ Please report bugs and feature requests through this repository's issue tracker.
 
 Historical release entries below may reference the upstream project they came from.
 
+## v3.0.0
+
+### Breaking Changes
+* Rebranded the plugin to Vault Encrypt with the plugin ID `vault-encrypt`.
+* Moved runtime identifiers, command IDs, view type, CSS hooks, package metadata, and release assets to Vault Encrypt naming.
+* Removed compatibility aliases for the old plugin ID, command IDs, view type, and CSS hooks.
+
+### Improvements
+* Updated English and Simplified Chinese README files with the current feature set and functional differences from Meld Encrypt.
+* Added screenshots for inline encryption, remembered-password settings, and password rotation.
+* Updated offline tool bundles for the current Vault Encrypt formats and naming.
+
 ## v2.4.5
 
 ### Improvements
