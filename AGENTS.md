@@ -80,7 +80,7 @@ When updating the installed test plugin, build first and copy the generated file
 
 to:
 
-- `/Users/bisco/private/obvault/.obsidian/plugins/vault-encrypt/`
+- `<your-test-vault>/.obsidian/plugins/vault-encrypt/`
 
 ## Release Process
 

@@ -31,7 +31,6 @@ export class OfflineDecrypt {
 		console.info( 'Trying whole note feature decryption' );
 		try{
 			const fileData = JsonFileEncoding.decode( content );
-			console.debug(fileData);
 			const chFd = CryptoHelperFactory.BuildFromFileDataOrNull( fileData );
 			const resultFd = await chFd?.decryptFromBase64( fileData.encodedData, password );
 			if ( resultFd != null ){
